@@ -1,0 +1,32 @@
+server:
+  port: 16730
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: system-service
+          uri: http://localhost:16732
+          predicates:
+            - Path=/system/**
+        - id: user-service
+          uri: http://localhost:16731
+          predicates:
+            - Path=/user/**
+        - id: admin-service
+          uri: http://localhost:16733
+          predicates:
+            - Path=/admin/**
+kaotu:
+  auth:
+    whitelist:
+      - /user/user/login
+      - /user/user/register
+      - /user/book/list
+      - /admin/**
+  jwt:
+    secret-key: itkaotu
+    ttl: 7200000
+  url:
+    webui: http://10.242.*

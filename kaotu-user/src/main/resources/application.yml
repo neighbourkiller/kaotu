@@ -1,0 +1,14 @@
+server:
+  port: 16731
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+
+kaotu:
+  jwt:
+    secret-key: itkaotu
+    ttl: 7200000
