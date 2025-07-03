@@ -55,4 +55,12 @@ public interface BookService extends IService<Book> {
      * @return List<CategoryVO> 包含所有书籍分类的视图对象列表
      */
     List<CategoryVO> getAllCategories();
+
+    /**
+     * 用户选择标签
+     * @param tags
+     */
+    void addTags(List<Integer> tags);
+
+    List<BookVO> getHotList();
 }

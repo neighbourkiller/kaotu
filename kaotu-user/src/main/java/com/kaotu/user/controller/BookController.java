@@ -7,6 +7,7 @@ import com.kaotu.base.result.Result;
 import com.kaotu.user.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/user/book")
 @Tag(name = "BookController", description = "图书相关接口")
@@ -63,5 +65,14 @@ public class BookController {
         return Result.success(bookService.getAllCategories());
     }
 
-
+    @GetMapping("/hot")
+    public Result<List<BookVO>> getHotList() {
+        try {
+            List<BookVO> hotBooks = bookService.getHotList();
+            return Result.success(hotBooks);
+        } catch (BaseException e) {
+            log.error("Error fetching hot books: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
 }

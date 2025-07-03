@@ -1,19 +1,26 @@
 package com.kaotu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.constant.WEIGHT;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.po.Favorite;
+import com.kaotu.base.model.po.UserTag;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
 import com.kaotu.user.mapper.BookMapper;
 import com.kaotu.user.mapper.FavoriteMapper;
+import com.kaotu.user.mapper.UserTagMapper;
 import com.kaotu.user.service.BookService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +41,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Autowired
     private FavoriteMapper favoriteMapper;
+
+    @Autowired
+    private UserTagMapper userTagMapper;
 
     @Override
     public BookVO getBookVOById(Integer bookId) {
@@ -95,8 +105,31 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     public List<CategoryVO> getAllCategories() {
         List<CategoryVO> categories = bookMapper.getAllCategories();
 
-
         return categories;
     }
 
+    @Override
+    @Transactional
+    public void addTags(List<Integer> tags) {
+        if (tags == null || tags.isEmpty()) {
+            throw new BaseException("标签列表不能为空");
+        }
+        // 清空当前用户的标签
+        LambdaQueryWrapper<UserTag> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.eq(UserTag::getUserId,UserContext.getUserId());
+        userTagMapper.delete(deleteWrapper);
+        // 插入新的标签
+        for(Integer tagId : tags){
+            userTagMapper.insert(new UserTag(UserContext.getUserId(), tagId, WEIGHT.TAG_WEIGHT));
+        }
+    }
+
+    @Override
+    public List<BookVO> getHotList() {
+        LambdaQueryWrapper<Book> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Book::getComments);
+        queryWrapper.last("limit 10");
+        List<BookVO> books= bookMapper.getBookVOList(queryWrapper);
+        return books;
+    }
 }

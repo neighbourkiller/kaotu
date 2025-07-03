@@ -13,6 +13,7 @@
             b.comments,
             b.book_url,
             b.img_url,
+            b.sub_category_id,
             bc.category_name
         FROM
             book b

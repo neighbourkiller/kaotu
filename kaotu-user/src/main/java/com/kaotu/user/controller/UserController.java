@@ -14,6 +14,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/user/user")
@@ -39,8 +41,6 @@ public class UserController {
             return Result.error(e.getMessage());
         }
     }
-
-
 
     @Operation(summary = "用户登录", description = "用户通过用户id和密码登录，成功后返回JWT令牌")
     @PostMapping("/login")
@@ -89,4 +89,36 @@ public class UserController {
             return Result.error("收藏书籍失败: " + e.getMessage());
         }
     }
+
+    @PostMapping("/tag")
+    @Operation(summary = "选择标签", description = "用户选择标签")
+    public Result selectTags(@RequestParam List<Integer> tags){
+        try {
+            bookService.addTags(tags);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("Error selecting tags: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/writeOff")
+    @Operation(summary = "注销用户", description = "注销当前登录用户")
+    public Result writeOff(){
+        try {
+            userService.removeById(UserContext.getUserId());
+            return Result.success();
+        }catch (Exception e){
+            log.error("Error writing off user: {}", e.getMessage());
+            return Result.error("注销失败，请稍后再试");
+        }
+    }
+
+    @GetMapping("/logout")
+    @Operation(summary = "用户登出", description = "用户登出操作")
+    public Result logout(){
+        return Result.success();
+    }
+
+
 }
