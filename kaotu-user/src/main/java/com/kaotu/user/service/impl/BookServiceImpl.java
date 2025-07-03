@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -131,5 +132,27 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         queryWrapper.last("limit 10");
         List<BookVO> books= bookMapper.getBookVOList(queryWrapper);
         return books;
+    }
+
+    //TODO 应获取personal_recommend表的数据并返回
+    @Override
+    public List<BookVO> getPersonalize() {//伪推荐
+        // 获取当前用户的标签
+        List<UserTag> userTags = userTagMapper.selectList(new LambdaQueryWrapper<UserTag>().eq(UserTag::getUserId, UserContext.getUserId()));
+        List<Integer> tagIds = new ArrayList<>();
+        for(UserTag userTag : userTags) {
+            tagIds.add(userTag.getTagId());
+        }
+        if (tagIds.isEmpty()) {
+            // 如果没有标签，返回空列表
+            return Collections.emptyList();
+        }
+        // 根据标签获取书籍
+        LambdaQueryWrapper<Book> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Book::getSubCategoryId,tagIds);
+        queryWrapper.orderByDesc(Book::getComments);
+        queryWrapper.last("limit 10");
+        List<BookVO> personalizedBooks = bookMapper.getBookVOList(queryWrapper);
+        return personalizedBooks;
     }
 }

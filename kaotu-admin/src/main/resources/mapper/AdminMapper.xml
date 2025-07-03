@@ -19,8 +19,9 @@
             book b
                 LEFT JOIN
             book_category bc ON b.sub_category_id = bc.id
-        ${ew.customSqlSegment}
+            ${ew.customSqlSegment}
     </select>
+
 
 </mapper>
 

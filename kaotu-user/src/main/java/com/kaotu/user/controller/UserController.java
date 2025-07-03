@@ -3,6 +3,7 @@ package com.kaotu.user.controller;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.po.User;
+import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.UserInfo;
 import com.kaotu.base.result.Result;
 import com.kaotu.user.service.BookService;
@@ -120,5 +121,10 @@ public class UserController {
         return Result.success();
     }
 
-
+    @GetMapping("/personalize")
+    @Operation(summary = "获取个性化推荐", description = "获取当前用户的个性化书籍推荐")
+    public Result<List<BookVO>> personalize() {
+        log.info("Fetching personalized recommendations for userId: {}", UserContext.getUserId());
+        return Result.success(bookService.getPersonalize());
+    }
 }

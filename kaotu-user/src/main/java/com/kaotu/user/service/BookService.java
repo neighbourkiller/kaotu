@@ -62,5 +62,17 @@ public interface BookService extends IService<Book> {
      */
     void addTags(List<Integer> tags);
 
+    /**
+     * 获取热门书籍列表
+     *
+     * @return List<BookVO> 包含热门书籍的视图对象列表
+     */
     List<BookVO> getHotList();
+
+    /**
+     * 获取个性化推荐书籍列表
+     *
+     * @return List<BookVO> 包含个性化推荐书籍的视图对象列表
+     */
+    List<BookVO> getPersonalize();
 }
