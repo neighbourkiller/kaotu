@@ -29,8 +29,14 @@ public interface BookMapper extends BaseMapper<Book> {
     @Select("select category_name from kaotu.book_category where id = #{categoryId}")
     String getCategoryNameById(@RequestParam Integer categoryId);
 
-
+    /**
+     * 搜索书籍，bug：sql语句含有in id时，出现id二义性
+     * @param queryWrapper
+     * @return
+     */
     List<BookVO> getBookVOList(@Param("ew") LambdaQueryWrapper<Book> queryWrapper);
+
+    List<BookVO> getBookVOList2(@Param("ew") QueryWrapper<Book> queryWrapper);
 
     List<CategoryVO> getAllCategories();
 

@@ -127,4 +127,18 @@ public class UserController {
         log.info("Fetching personalized recommendations for userId: {}", UserContext.getUserId());
         return Result.success(bookService.getPersonalize());
     }
+
+
+    @GetMapping("/collect")
+    @Operation(summary = "获取收藏书籍", description = "获取当前用户收藏的书籍列表")
+    public Result<List<BookVO>> collect() {
+        log.info("Fetching collected books for userId: {}", UserContext.getUserId());
+        try {
+            List<BookVO> collectedBooks = bookService.getCollectBooks();
+            return Result.success(collectedBooks);
+        } catch (BaseException e) {
+            log.error("Error fetching collected books: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
 }

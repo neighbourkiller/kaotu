@@ -61,6 +61,20 @@
         WHERE
             parent_category = #{parentId}
     </select>
+    <select id="getBookVOList2" resultType="com.kaotu.base.model.vo.BookVO">
+        SELECT b.id,
+               b.title,
+               b.publisher,
+               b.comments,
+               b.book_url,
+               b.img_url,
+               b.sub_category_id,
+               bc.category_name
+        FROM book b
+                 LEFT JOIN
+             book_category bc ON b.sub_category_id = bc.id
+            ${ew.customSqlSegment}
+    </select>
 
 
 </mapper>

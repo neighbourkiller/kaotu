@@ -17,6 +17,7 @@ import com.kaotu.user.mapper.BookMapper;
 import com.kaotu.user.mapper.FavoriteMapper;
 import com.kaotu.user.mapper.UserTagMapper;
 import com.kaotu.user.service.BookService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.List;
  * @author killer
  * @since 2025-07-02
  */
+@Slf4j
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements BookService {
 
@@ -154,5 +156,27 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         queryWrapper.last("limit 10");
         List<BookVO> personalizedBooks = bookMapper.getBookVOList(queryWrapper);
         return personalizedBooks;
+    }
+
+    @Override
+    public List<BookVO> getCollectBooks() {
+        // 获取当前用户的收藏书籍ids
+        LambdaQueryWrapper<Favorite> favoriteQuery = new LambdaQueryWrapper<>();
+        favoriteQuery.eq(Favorite::getUserId, UserContext.getUserId());
+        List<Favorite> favorites = favoriteMapper.selectList(favoriteQuery);
+
+        if (favorites.isEmpty()) {
+            return Collections.emptyList(); // 如果没有收藏，返回空列表
+        }
+
+        List<Integer> bookIds = new ArrayList<>();
+        for (Favorite favorite : favorites) {
+            bookIds.add(favorite.getBookId());
+        }
+
+        QueryWrapper<Book> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("b.id", bookIds);
+
+        return bookMapper.getBookVOList2(queryWrapper);
     }
 }

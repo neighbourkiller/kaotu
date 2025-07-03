@@ -75,4 +75,6 @@ public interface BookService extends IService<Book> {
      * @return List<BookVO> 包含个性化推荐书籍的视图对象列表
      */
     List<BookVO> getPersonalize();
+
+    List<BookVO> getCollectBooks();
 }
