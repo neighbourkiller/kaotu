@@ -17,7 +17,7 @@ public class UserIdInterceptor implements HandlerInterceptor {
         String userId = request.getHeader("userId");
 
         if (userId != null) {
-            log.info("当前请求的用户ID为：{}", userId);
+            log.debug("当前请求的用户ID为：{}", userId);
             UserContext.setUserId(userId);
         } else {
             log.info("当前请求没有用户ID");

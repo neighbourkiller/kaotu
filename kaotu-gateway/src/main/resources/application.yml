@@ -23,8 +23,9 @@ kaotu:
     whitelist:
       - /user/user/login
       - /user/user/register
-      - /user/book/list
       - /admin/**
+      - /user/book/
+      - /user/book/**
   jwt:
     secret-key: itkaotu
     ttl: 7200000

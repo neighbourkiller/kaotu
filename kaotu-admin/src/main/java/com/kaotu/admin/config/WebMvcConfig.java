@@ -17,8 +17,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminInterceptor)
-                .addPathPatterns("/admin/**") // 拦截所有请求路径
-                .excludePathPatterns("/admin/login"); // 排除登录、注册接口
+                .addPathPatterns("/**") // 拦截所有请求路径
+                .excludePathPatterns("/admin/login") // 排除登录、注册接口
+                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**", "/webjars/**"); // 排除Swagger相关路径
         log.info("AdminInterceptor registered successfully.");
     }
 

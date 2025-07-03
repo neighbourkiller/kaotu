@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaotu.admin.mapper.AdminMapper">
+
+
+    <select id="selectBookPageWithCategory" resultType="com.kaotu.base.model.vo.BookVO">
+        SELECT
+            b.id,
+            b.title,
+            b.publisher,
+            b.comments,
+            b.book_url,
+            b.img_url,
+            bc.category_name
+        FROM
+            book b
+                LEFT JOIN
+            book_category bc ON b.sub_category_id = bc.id
+        ${ew.customSqlSegment}
+    </select>
+
+</mapper>
+

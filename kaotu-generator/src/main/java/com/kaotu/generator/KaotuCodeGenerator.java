@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class KaotuCodeGenerator {
     // TODO 修改服务名以及数据表名
-    private static final String SERVICE_NAME = "user";
+    private static final String SERVICE_NAME = "book";
 
     //数据库账号
     private static final String DATA_SOURCE_USER_NAME = "root";
@@ -32,7 +32,7 @@ public class KaotuCodeGenerator {
 //            "course_category",
 //            "course_publish",
 //            "course_publish_pre"
-            "user"
+            "book_category",
     };
 
     // TODO 默认生成entity，需要生成DTO修改此变量

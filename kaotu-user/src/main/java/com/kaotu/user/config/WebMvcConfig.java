@@ -18,26 +18,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-/*    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // 自己提供一个 FastJsonHttpMessageConverter 实例
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        FastJsonConfig config = new FastJsonConfig();
-        // 设置解析式日期的格式
-        config.setDateFormat("yyyy-MM-dd");
-        // 设置解析时编码格式为 UTF-8
-        config.setCharset(StandardCharsets.UTF_8);
-        config.setSerializerFeatures(
-                SerializerFeature.WriteClassName,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.PrettyFormat,
-                SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullStringAsEmpty
-        );
-        converter.setFastJsonConfig(config);
-        converters.add(converter);
-    }*/
-
     @Autowired
     private UserIdInterceptor userIdInterceptor;
 
@@ -45,6 +25,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userIdInterceptor)
                 .addPathPatterns("/**") // 拦截所有请求路径
+                .excludePathPatterns("swagger-ui.html", "/v3/api-docs/**", "/webjars/**", "/error") // 排除Swagger相关路径和错误处理路径
+                .excludePathPatterns("/user/book","/user/book/**") // 排除书籍相关接口
                 .excludePathPatterns("/user/user/login", "/user/user/register"); // 排除登录、注册和忘记密码接口
     }
 }

@@ -21,6 +21,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         // 设置 createDate 字段的值为当前系统时间
         this.strictInsertFill(metaObject, "createDate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "lastLogin", LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject,"favoriteTime", LocalDateTime.class, LocalDateTime.now());
     }
 
     /**

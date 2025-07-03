@@ -4,8 +4,8 @@ import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.UserInfo;
-import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.result.Result;
+import com.kaotu.user.service.BookService;
 import com.kaotu.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private JwtProperties jwtProperties;
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    private BookService bookService;
 
     @Operation(summary = "用户注册", description = "用户通过用户id和密码注册，成功后返回JWT令牌")
     @PostMapping("/register")
@@ -76,6 +76,17 @@ public class UserController {
         } catch (BaseException e) {
             log.error("Error modifying email: {}", e.getMessage());
             return Result.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/favorite")
+    @Operation(summary = "收藏书籍", description = "收藏指定的书籍")
+    public Result collectBook(@RequestParam Integer bookId) {
+        try {
+            bookService.collectBook(bookId);
+            return Result.success();
+        }catch (BaseException e){
+            return Result.error("收藏书籍失败: " + e.getMessage());
         }
     }
 }

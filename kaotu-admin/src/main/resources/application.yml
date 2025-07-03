@@ -7,6 +7,7 @@ spring:
     url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
 kaotu:
   jwt:
     secret-key: itkaotu-admin

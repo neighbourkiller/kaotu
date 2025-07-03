@@ -32,6 +32,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getSecretKey(), token.substring(7));
             if(claims.get("adminId")==null){
+                log.error("令牌校验不通过");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return  false;
             }

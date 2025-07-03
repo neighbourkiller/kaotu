@@ -12,3 +12,5 @@ kaotu:
   jwt:
     secret-key: itkaotu
     ttl: 7200000
+logging:
+  config: classpath:logback.xml

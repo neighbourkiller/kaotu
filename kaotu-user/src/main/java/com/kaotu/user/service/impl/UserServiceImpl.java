@@ -5,6 +5,7 @@ import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.utils.JwtUtil;
+import com.kaotu.base.utils.PasswordUtil;
 import com.kaotu.user.mapper.UserMapper;
 import com.kaotu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User selected = userMapper.selectById(user.getUserId());
         if (selected != null)
             throw new BaseException("账号已存在");
+        if(PasswordUtil.isUserIdValid(user.getUserId()))
+            throw new BaseException("账号格式不正确");
+        if(PasswordUtil.isValid(user.getPassword()))
+            throw new BaseException("密码格式不正确");
+
         user.setUsername("用户" + user.getUserId());
         //密码加密逻辑
         String salt = UUID.randomUUID().toString();
