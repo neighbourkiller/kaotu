@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.constant.Status;
+import com.kaotu.base.constant.USER;
 import com.kaotu.base.constant.WEIGHT;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
-import com.kaotu.base.model.po.Book;
-import com.kaotu.base.model.po.Favorite;
-import com.kaotu.base.model.po.UserTag;
+import com.kaotu.base.model.po.*;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
-import com.kaotu.user.mapper.BookMapper;
-import com.kaotu.user.mapper.FavoriteMapper;
-import com.kaotu.user.mapper.UserTagMapper;
+import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.user.mapper.*;
 import com.kaotu.user.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -131,7 +131,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     public List<BookVO> getHotList() {
         LambdaQueryWrapper<Book> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(Book::getComments);
-        queryWrapper.last("limit 10");
+        queryWrapper.last("limit 12");
         List<BookVO> books= bookMapper.getBookVOList(queryWrapper);
         return books;
     }
@@ -147,13 +147,13 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         }
         if (tagIds.isEmpty()) {
             // 如果没有标签，返回空列表
-            return Collections.emptyList();
+            return getHotList();
         }
         // 根据标签获取书籍
         LambdaQueryWrapper<Book> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Book::getSubCategoryId,tagIds);
         queryWrapper.orderByDesc(Book::getComments);
-        queryWrapper.last("limit 10");
+        queryWrapper.last("limit 12");
         List<BookVO> personalizedBooks = bookMapper.getBookVOList(queryWrapper);
         return personalizedBooks;
     }
@@ -178,5 +178,39 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         queryWrapper.in("b.id", bookIds);
 
         return bookMapper.getBookVOList2(queryWrapper);
+    }
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Override
+    public List<CommentVO> getCommentsByBookId(Integer bookId) {
+        if (bookId == null || bookId <= 0) {
+            throw new BaseException("无效的书籍ID");
+        }
+        List<Comment> comments = commentMapper.selectList(new LambdaQueryWrapper<Comment>()
+                .eq(Comment::getBookId, bookId)
+                .eq(Comment::getStatus, Status.ENABLE)); // 只查询状态为1的评论);
+        return comments.stream().map(comment -> {
+            CommentVO commentVO = new CommentVO();
+            BeanUtils.copyProperties(comment, commentVO);
+            // 设置书籍标题
+            Book book = bookMapper.selectById(comment.getBookId());
+            if (book != null) {
+                commentVO.setTitle(book.getTitle());
+            }
+            // 设置用户名
+            User user = userMapper.selectById(comment.getUserId());
+            if (user != null) {
+                commentVO.setUsername(user.getUsername());
+            } else {
+                commentVO.setUsername(USER.WRITEOFF_USER); // 如果用户不存在，则已注销
+            }
+
+            return commentVO;
+        }).collect(Collectors.toList());
     }
 }

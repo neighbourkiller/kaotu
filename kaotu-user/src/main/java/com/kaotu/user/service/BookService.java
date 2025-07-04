@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
+import com.kaotu.base.model.vo.CommentVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -77,4 +78,6 @@ public interface BookService extends IService<Book> {
     List<BookVO> getPersonalize();
 
     List<BookVO> getCollectBooks();
+
+    List<CommentVO> getCommentsByBookId(Integer bookId);
 }

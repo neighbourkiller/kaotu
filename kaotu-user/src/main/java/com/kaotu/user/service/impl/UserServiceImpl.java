@@ -1,27 +1,38 @@
 package com.kaotu.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.constant.Status;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
+import com.kaotu.base.model.dto.CommentDto;
+import com.kaotu.base.model.po.Book;
+import com.kaotu.base.model.po.Comment;
+import com.kaotu.base.model.po.CommentLike;
 import com.kaotu.base.model.po.User;
+import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.utils.JwtUtil;
 import com.kaotu.base.utils.PasswordUtil;
+import com.kaotu.user.mapper.BookMapper;
+import com.kaotu.user.mapper.CommentLikeMapper;
+import com.kaotu.user.mapper.CommentMapper;
 import com.kaotu.user.mapper.UserMapper;
 import com.kaotu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -140,5 +151,92 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         log.info("用户ID: {}, 浏览书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
 
         logger.info("用户ID: {}, 书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
+    }
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private BookMapper bookMapper;
+
+    @Override
+    public void commentBook(CommentDto commentDto) {
+
+        log.info("用户ID: {}, 评论书籍ID: {}, 评论内容: {}", UserContext.getUserId(), commentDto.getBookId(), commentDto.getContent());
+        if(!commentDto.getUserId().equals(UserContext.getUserId())) {
+            log.error("评论失败，用户ID不匹配: 用户ID={}, 当前登录用户ID={}", commentDto.getUserId(), UserContext.getUserId());
+            throw new BaseException("评论失败，用户ID不匹配");
+        }
+        if(commentDto.getStar()<1 || commentDto.getStar()>5) {
+            throw new BaseException("评论失败，星级必须在1到5之间");
+        }
+        if (commentDto.getContent()==null) {
+            throw new BaseException("评论内容不能为空");
+        }
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentDto,comment);
+        comment.setCommentTime(LocalDateTime.now());
+        commentMapper.insert(comment);
+    }
+
+    /**
+     * 获取当前用户的评论列表
+     * @return List<CommentVO> 包含评论信息的视图对象列表
+     */
+    @Override
+    public List<CommentVO> myComments() {
+
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getUserId,UserContext.getUserId())
+                .eq(Comment::getStatus, Status.ENABLE)
+                .orderByDesc(Comment::getCommentTime);
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        if(comments.isEmpty())
+            return null;
+        User user = userMapper.selectById(UserContext.getUserId());
+        String username = user.getUsername();
+        return comments.stream().map(comment -> {
+            CommentVO commentVO = new CommentVO();
+            BeanUtils.copyProperties(comment,commentVO);
+            Book book = bookMapper.selectById(comment.getBookId());
+            if (book != null) {
+                commentVO.setTitle(book.getTitle());
+            }
+            // 设置用户名
+            commentVO.setUsername(username);
+
+            return commentVO;
+        }).collect(Collectors.toList());
+
+    }
+
+    @Autowired
+    private CommentLikeMapper commentLikeMapper;
+
+    @Override
+    @Transactional
+    public void upvoteComment(Integer commentId) {
+
+        // 检查是否已经点赞
+        CommentLike one = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
+                .eq(CommentLike::getUserId, UserContext.getUserId())
+                .eq(CommentLike::getCommentId, commentId));
+        if (one != null) {
+            throw new BaseException("已点赞，不能重复点赞");
+        }
+        // 插入点赞记录
+        CommentLike commentLike = new CommentLike();
+        commentLike.setCommentId(commentId);
+        commentLike.setUserId(UserContext.getUserId());
+        commentLike.setCreateTime(LocalDateTime.now());
+        int insert = commentLikeMapper.insert(commentLike);
+        if (insert == 0) {
+            throw new BaseException("点赞失败，系统错误");
+        }
+        // 更新评论的点赞数
+        int i = commentMapper.updateCommentUps(commentId, 1);
+        if (i == 0) {
+            throw new BaseException("点赞失败，系统错误");
+        }
     }
 }

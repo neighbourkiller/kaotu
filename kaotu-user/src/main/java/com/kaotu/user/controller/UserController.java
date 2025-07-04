@@ -2,8 +2,10 @@ package com.kaotu.user.controller;
 
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
+import com.kaotu.base.model.dto.CommentDto;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.BookVO;
+import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.model.vo.UserInfo;
 import com.kaotu.base.result.Result;
 import com.kaotu.user.service.BookService;
@@ -153,6 +155,34 @@ public class UserController {
         }
     }
 
+    @PostMapping("/comment")
+    @Operation(summary = "发表评论", description = "用户对书籍发表评论")
+    public Result comment(@RequestBody CommentDto commentDto){
+        try {
+            userService.commentBook(commentDto);
+            return Result.success();
+        }catch (BaseException e){
+            log.error("Error commenting book: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
 
+    @GetMapping("/mycomments")
+    @Operation(summary = "我的评论",description = "查看用户的所有评论，按时间倒序排序")
+    public Result<List<CommentVO>> myComments(){
 
+        return Result.success(userService.myComments());
+    }
+
+    @GetMapping("/upvote")
+    @Operation(summary = "点赞评论", description = "用户对评论进行点赞")
+    public Result upvoteComment(@RequestParam("commentId") Integer commentId) {
+        try {
+            userService.upvoteComment(commentId);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("Error upvoting comment: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
 }

@@ -32,7 +32,7 @@ public class KaotuCodeGenerator {
 //            "course_category",
 //            "course_publish",
 //            "course_publish_pre"
-            "comment"
+            "comment_like"
     };
 
     // TODO 默认生成entity，需要生成DTO修改此变量
