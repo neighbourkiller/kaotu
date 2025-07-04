@@ -1,6 +1,7 @@
 package com.kaotu.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.properties.JwtProperties;
@@ -9,6 +10,8 @@ import com.kaotu.base.utils.PasswordUtil;
 import com.kaotu.user.mapper.UserMapper;
 import com.kaotu.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -127,5 +130,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.error("密码加密失败", e);
             throw new BaseException("系统错误，无法加密密码");
         }
+    }
+    private static final Logger logger= LoggerFactory.getLogger("browse");
+
+    @Override
+    public void recordBrowseTime(int bookId, int timeInSeconds) {
+        // 记录用户浏览书籍的时间逻辑
+        // 这里可以实现具体的业务逻辑，比如将浏览时间存储到数据库中
+        log.info("用户ID: {}, 浏览书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
+
+        logger.info("用户ID: {}, 书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
     }
 }

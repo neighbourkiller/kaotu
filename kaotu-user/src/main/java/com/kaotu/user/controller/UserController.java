@@ -141,4 +141,18 @@ public class UserController {
             return Result.error(e.getMessage());
         }
     }
+
+    @GetMapping("/record")
+    public Result recordTime(@RequestParam("bookId") Integer bookId,@RequestParam("time") Integer time){
+        try {
+            userService.recordBrowseTime(bookId, time);
+            return Result.success();
+        }catch (Exception e){
+            log.error("Error recording browse time: {}", e.getMessage());
+            return Result.error("记录浏览时间失败，请稍后再试");
+        }
+    }
+
+
+
 }

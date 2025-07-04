@@ -9,4 +9,5 @@ public interface UserService extends IService<User> {
     String register(User user);
     String login(User user);
     void modifyEmail(String userId, String email);
+    void recordBrowseTime(int bookId,int timeInSeconds);
 }

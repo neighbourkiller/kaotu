@@ -4,7 +4,7 @@
 <configuration scan="true">
 
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
-    <property name="CATALINA_BASE" value="logs"></property>
+    <property name="CATALINA_BASE" value="/logs/job"></property>
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -59,7 +59,6 @@
     <!-- additivity="false"表示此logger的日志将不会在root中重复打印 -->
     <logger name="browse" level="info" additivity="false">
         <appender-ref ref="BROWSE" />
-<!--        <appender-ref ref="FILE2" />-->
     </logger>
 
 <!--    &lt;!&ndash; 自定义logger &ndash;&gt;-->
