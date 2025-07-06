@@ -50,9 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User selected = userMapper.selectById(user.getUserId());
         if (selected != null)
             throw new BaseException("账号已存在");
-        if(PasswordUtil.isUserIdValid(user.getUserId()))
+        if(!PasswordUtil.isUserIdValid(user.getUserId()))
             throw new BaseException("账号格式不正确");
-        if(PasswordUtil.isValid(user.getPassword()))
+        if(!PasswordUtil.isValid(user.getPassword()))
             throw new BaseException("密码格式不正确");
 
         user.setUsername("用户" + user.getUserId());
@@ -144,6 +144,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
     private static final Logger logger= LoggerFactory.getLogger("browse");
+
+    @Override
+    public void modifyUsername(String userId, String username){
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BaseException("用户不存在");
+        }
+        if(username==null || username.isEmpty()) {
+            throw new BaseException("用户名不能为空");
+        }
+        // TODO 审核用户名
+
+        user.setUsername(username);
+        int update = userMapper.updateById(user);
+        if (update == 0) {
+            throw new BaseException("系统错误，修改用户名失败");
+        }
+    }
 
     @Override
     public void recordBrowseTime(int bookId, int timeInSeconds) {

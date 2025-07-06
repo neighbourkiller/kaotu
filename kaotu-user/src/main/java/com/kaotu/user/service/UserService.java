@@ -12,6 +12,7 @@ public interface UserService extends IService<User> {
 
     String register(User user);
     String login(User user);
+    void modifyUsername(String userId, String username);
     void modifyEmail(String userId, String email);
     void recordBrowseTime(int bookId,int timeInSeconds);
     void commentBook(CommentDto commentDto);
@@ -19,4 +20,6 @@ public interface UserService extends IService<User> {
     void upvoteComment(Integer commentId);
 
     void undoVoteComment(Integer commentId);
+
+
 }

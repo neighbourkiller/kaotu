@@ -70,6 +70,19 @@ public class UserController {
         return Result.success(userInfo);
     }
 
+    @Operation(summary = "修改用户名", description = "修改当前登录用户的用户名")
+    @PutMapping("/username")
+    public Result modifyUsername(@RequestParam String username) {
+        log.info("修改用户名 for userId: {}, new username: {}", UserContext.getUserId(), username);
+        try {
+            userService.modifyUsername(UserContext.getUserId(), username);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("Error modifying username: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
+
     @Operation(summary = "修改用户邮箱", description = "修改当前登录用户的邮箱地址")
     @PutMapping("/email")
     public Result modifyEmail(@RequestParam String email) {
