@@ -15,18 +15,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * </p>
  */
 @Slf4j
-@Configuration
+//@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private UserIdInterceptor userIdInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userIdInterceptor)
-                .addPathPatterns("/**") // 拦截所有请求路径
-                .excludePathPatterns("swagger-ui.html", "/v3/api-docs/**", "/webjars/**", "/error") // 排除Swagger相关路径和错误处理路径
-                .excludePathPatterns("/user/book","/user/book/**") // 排除书籍相关接口
-                .excludePathPatterns("/user/user/login", "/user/user/register"); // 排除登录、注册和忘记密码接口
-    }
+//    @Autowired
+//    private UserIdInterceptor userIdInterceptor;
+//
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(userIdInterceptor)
+//                .addPathPatterns("/**") // 拦截所有请求路径
+//                .excludePathPatterns("swagger-ui.html", "/v3/api-docs/**", "/webjars/**", "/error") // 排除Swagger相关路径和错误处理路径
+//                .excludePathPatterns("/user/book","/user/book/**") // 排除书籍相关接口
+//                .excludePathPatterns("/user/user/login", "/user/user/register"); // 排除登录、注册和忘记密码接口
+//    }
 }

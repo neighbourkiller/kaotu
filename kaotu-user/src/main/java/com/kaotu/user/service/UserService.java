@@ -3,7 +3,7 @@ package com.kaotu.user.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kaotu.base.model.dto.CommentDto;
 import com.kaotu.base.model.po.User;
-import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.base.model.vo.CommentVO_;
 
 import java.util.List;
 
@@ -15,6 +15,8 @@ public interface UserService extends IService<User> {
     void modifyEmail(String userId, String email);
     void recordBrowseTime(int bookId,int timeInSeconds);
     void commentBook(CommentDto commentDto);
-    List<CommentVO> myComments();
+    List<CommentVO_> myComments();
     void upvoteComment(Integer commentId);
+
+    void undoVoteComment(Integer commentId);
 }

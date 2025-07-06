@@ -9,10 +9,10 @@ import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.util.Collections;
 
-@Configuration
+//@Configuration
 public class CorsConfig {
 
-    @Bean
+//    @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         // 推荐使用 setAllowedOriginPatterns 支持通配符，比 setAllowedOrigins 更灵活
@@ -28,4 +28,3 @@ public class CorsConfig {
         return new CorsWebFilter(source);
     }
 }
-//http://10.242.*

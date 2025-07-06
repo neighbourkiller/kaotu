@@ -1,9 +1,11 @@
 package com.kaotu.user.controller;
 
+import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
 import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.base.model.vo.CommentVO_;
 import com.kaotu.base.result.Result;
 import com.kaotu.user.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,8 +64,8 @@ public class BookController {
     }
 
     @GetMapping("/tags")
-    public Result<List<CategoryVO>> getAllTags(){
-        return Result.success(bookService.getAllCategories());
+    public Result<List<CategoryVO>> getAllTags() {
+        return Result.success(bookService.getAllCategories(UserContext.getUserId()));
     }
 
     @GetMapping("/hot")
@@ -79,9 +81,9 @@ public class BookController {
 
     @GetMapping("/comments")
     @Operation(summary = "获取书籍评论", description = "根据书籍ID获取评论列表")
-    public Result<List<CommentVO>> getCommentsByBookId(@RequestParam Integer bookId) {
+    public Result<List<CommentVO_>> getCommentsByBookId(@RequestParam("bookId") Integer bookId) {
         try {
-            List<CommentVO> comments = bookService.getCommentsByBookId(bookId);
+            List<CommentVO_> comments = bookService.getCommentsByBookId(bookId,UserContext.getUserId());
             return Result.success(comments);
         } catch (BaseException e) {
             return Result.error("获取书籍评论失败: " + e.getMessage());

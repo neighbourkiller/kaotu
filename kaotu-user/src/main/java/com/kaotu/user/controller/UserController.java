@@ -6,6 +6,7 @@ import com.kaotu.base.model.dto.CommentDto;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.base.model.vo.CommentVO_;
 import com.kaotu.base.model.vo.UserInfo;
 import com.kaotu.base.result.Result;
 import com.kaotu.user.service.BookService;
@@ -123,6 +124,9 @@ public class UserController {
         return Result.success();
     }
 
+
+
+
     @GetMapping("/personalize")
     @Operation(summary = "获取个性化推荐", description = "获取当前用户的个性化书籍推荐")
     public Result<List<BookVO>> personalize() {
@@ -169,8 +173,7 @@ public class UserController {
 
     @GetMapping("/mycomments")
     @Operation(summary = "我的评论",description = "查看用户的所有评论，按时间倒序排序")
-    public Result<List<CommentVO>> myComments(){
-
+    public Result<List<CommentVO_>> myComments(){
         return Result.success(userService.myComments());
     }
 
@@ -182,6 +185,18 @@ public class UserController {
             return Result.success();
         } catch (BaseException e) {
             log.error("Error upvoting comment: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/upvote")
+    @Operation(summary = "取消点赞评论", description = "用户取消对评论的点赞")
+    public Result undoVoteComment(@RequestParam("commentId") Integer commentId) {
+        try {
+            userService.undoVoteComment(commentId);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("Error undoing upvote on comment: {}", e.getMessage());
             return Result.error(e.getMessage());
         }
     }

@@ -4,8 +4,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Data
-public class CommentVO {
+public class CommentVO_ {
     private Integer id;
     private Integer bookId;
     private String userId;
@@ -16,5 +17,5 @@ public class CommentVO {
     private Integer status;
     private String title;
     private String username;
-
+    private Integer isUpvoted; // 是否已点赞，"1"或"0"
 }

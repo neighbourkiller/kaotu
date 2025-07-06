@@ -40,26 +40,29 @@
 
         <collection
                 property="subCategory"
-                ofType="com.kaotu.base.model.po.Category"
-                column="id"
+                ofType="com.kaotu.base.model.vo.SubCategoryVO"
+                column="{parentId=id, userId=userId}"
                 select="com.kaotu.user.mapper.BookMapper.selectSubCategoriesByParentId">
         </collection>
     </resultMap>
 
     <select id="getAllCategories" resultMap="CategoryWithSubCategoriesMap">
-        SELECT id, name
+        SELECT id, name,#{userId} AS userId
         FROM parent_category
         order by id
     </select>
-    <select id="selectSubCategoriesByParentId" resultType="com.kaotu.base.model.po.Category">
+    <select id="selectSubCategoriesByParentId" resultType="com.kaotu.base.model.vo.SubCategoryVO">
         SELECT
-            id,
-            category_name,
-            parent_category
+            bc.id,
+            bc.category_name,
+            bc.parent_category,
+            CASE WHEN ut.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_selected
         FROM
-            book_category
+            book_category bc
+        LEFT JOIN
+            user_tag ut ON bc.id = ut.tag_id AND ut.user_id = #{userId}
         WHERE
-            parent_category = #{parentId}
+            bc.parent_category = #{parentId}
     </select>
     <select id="getBookVOList2" resultType="com.kaotu.base.model.vo.BookVO">
         SELECT b.id,

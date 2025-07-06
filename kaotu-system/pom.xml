@@ -10,6 +10,7 @@
         <groupId>com.kaotu</groupId>
         <artifactId>kaotu-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../kaotu-parent</relativePath>
     </parent>
     <properties>
         <java.version>1.8</java.version>

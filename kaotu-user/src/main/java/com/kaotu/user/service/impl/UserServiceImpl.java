@@ -11,6 +11,7 @@ import com.kaotu.base.model.po.Comment;
 import com.kaotu.base.model.po.CommentLike;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.base.model.vo.CommentVO_;
 import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.utils.JwtUtil;
 import com.kaotu.base.utils.PasswordUtil;
@@ -176,6 +177,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentDto,comment);
         comment.setCommentTime(LocalDateTime.now());
+        log.info(comment.toString());
         commentMapper.insert(comment);
     }
 
@@ -184,8 +186,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return List<CommentVO> 包含评论信息的视图对象列表
      */
     @Override
-    public List<CommentVO> myComments() {
-
+    public List<CommentVO_> myComments() {
+        // 搜索评论
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getUserId,UserContext.getUserId())
                 .eq(Comment::getStatus, Status.ENABLE)
@@ -196,7 +198,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = userMapper.selectById(UserContext.getUserId());
         String username = user.getUsername();
         return comments.stream().map(comment -> {
-            CommentVO commentVO = new CommentVO();
+            CommentVO_ commentVO = new CommentVO_();
             BeanUtils.copyProperties(comment,commentVO);
             Book book = bookMapper.selectById(comment.getBookId());
             if (book != null) {
@@ -204,6 +206,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             // 设置用户名
             commentVO.setUsername(username);
+            // 设置是否点赞评论
+            if(commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
+                    .eq(CommentLike::getCommentId, comment.getId())
+                    .eq(CommentLike::getUserId, UserContext.getUserId()))==null)
+                commentVO.setIsUpvoted(0);
+            else commentVO.setIsUpvoted(1);
 
             return commentVO;
         }).collect(Collectors.toList());
@@ -237,6 +245,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int i = commentMapper.updateCommentUps(commentId, 1);
         if (i == 0) {
             throw new BaseException("点赞失败，系统错误");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void undoVoteComment(Integer commentId){
+        CommentLike one = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
+                .eq(CommentLike::getUserId, UserContext.getUserId())
+                .eq(CommentLike::getCommentId, commentId));
+        if(one==null)
+            throw new BaseException("未点赞，不能取消点赞");
+        // 删除点赞记录
+        int delete = commentLikeMapper.deleteById(one.getId());
+        if (delete == 0) {
+            throw new BaseException("取消点赞失败，系统错误");
+        }
+        int i=commentMapper.updateCommentUps(commentId, -1);
+        if (i == 0) {
+            throw new BaseException("取消点赞失败，系统错误");
         }
     }
 }

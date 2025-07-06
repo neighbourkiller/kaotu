@@ -5,6 +5,7 @@ import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
 import com.kaotu.base.model.vo.CommentVO;
+import com.kaotu.base.model.vo.CommentVO_;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public interface BookService extends IService<Book> {
      *
      * @return List<CategoryVO> 包含所有书籍分类的视图对象列表
      */
-    List<CategoryVO> getAllCategories();
+    List<CategoryVO> getAllCategories(String userID);
 
     /**
      * 用户选择标签
@@ -77,7 +78,11 @@ public interface BookService extends IService<Book> {
      */
     List<BookVO> getPersonalize();
 
+    List<BookVO> getPersonalize2();
+
+
+
     List<BookVO> getCollectBooks();
 
-    List<CommentVO> getCommentsByBookId(Integer bookId);
+    List<CommentVO_> getCommentsByBookId(Integer bookId, String userId);
 }

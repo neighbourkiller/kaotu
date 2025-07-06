@@ -35,10 +35,4 @@ public class UserTag implements Serializable {
 
     private Integer weight;
 
-
-    public UserTag(String userId, int i, int tagWeight) {
-        this.userId = userId;
-        this.tagId = i;
-        this.weight = tagWeight;
-    }
 }

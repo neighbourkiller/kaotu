@@ -12,4 +12,5 @@ public class BookVO {
     private String imgUrl;
     private Integer subCategoryId;
     private String categoryName;
+    private Integer isCollected;
 }

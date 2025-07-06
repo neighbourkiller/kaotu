@@ -8,6 +8,7 @@ import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.po.Category;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
+import com.kaotu.base.model.vo.SubCategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -38,8 +39,8 @@ public interface BookMapper extends BaseMapper<Book> {
 
     List<BookVO> getBookVOList2(@Param("ew") QueryWrapper<Book> queryWrapper);
 
-    List<CategoryVO> getAllCategories();
+    List<CategoryVO> getAllCategories(@Param("userId") String userId);
 
-    List<Category> selectSubCategoriesByParentId(@Param("parentId") Integer parentId);
+    List<SubCategoryVO> selectSubCategoriesByParentId(@Param("parentId") Integer parentId,@Param("userId") String userId);
 
 }
