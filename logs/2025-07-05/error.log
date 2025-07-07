@@ -1,0 +1,6 @@
+2025-07-05 16:35:11.807 [http-nio-16731-exec-3] ERROR error - JWT解析失败: JWT expired at 2025-07-04T17:26:56Z. Current time: 2025-07-05T16:35:11Z, a difference of 83295805 milliseconds.  Allowed clock skew: 0 milliseconds.
+2025-07-05 16:37:47.807 [http-nio-16731-exec-1] ERROR error - JWT解析失败: JWT expired at 2025-07-04T17:26:56Z. Current time: 2025-07-05T16:37:47Z, a difference of 83451805 milliseconds.  Allowed clock skew: 0 milliseconds.
+2025-07-05 16:39:54.589 [http-nio-16731-exec-4] ERROR error - JWT解析失败: JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.
+2025-07-05 16:40:23.218 [http-nio-16731-exec-5] ERROR error - JWT解析失败: JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.
+2025-07-05 16:42:22.279 [http-nio-16731-exec-1] ERROR error - JWT解析失败: JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.
+2025-07-05 16:44:04.595 [http-nio-16731-exec-1] ERROR error - JWT解析失败: JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.

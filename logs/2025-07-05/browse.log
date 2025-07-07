@@ -1,0 +1,16 @@
+2025-07-05 09:10:54.138 [http-nio-16731-exec-5] INFO  browse - 用户ID: test, 书籍ID: 4, 停留时间: 13秒
+2025-07-05 09:11:37.771 [http-nio-16731-exec-2] INFO  browse - 用户ID: test, 书籍ID: 1, 停留时间: 5秒
+2025-07-05 09:14:09.978 [http-nio-16731-exec-6] INFO  browse - 用户ID: test, 书籍ID: 4, 停留时间: 13秒
+2025-07-05 09:17:59.049 [http-nio-16731-exec-10] INFO  browse - 用户ID: test, 书籍ID: 1, 停留时间: 6秒
+2025-07-05 09:44:23.806 [http-nio-16731-exec-10] INFO  browse - 用户ID: test, 书籍ID: 1, 停留时间: 56秒
+2025-07-05 09:47:50.771 [http-nio-16731-exec-2] INFO  browse - 用户ID: test, 书籍ID: 1, 停留时间: 54秒
+2025-07-05 10:45:44.275 [http-nio-16731-exec-6] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 4秒
+2025-07-05 10:57:56.629 [http-nio-16731-exec-10] INFO  browse - 用户ID: test1, 书籍ID: 4, 停留时间: 233秒
+2025-07-05 11:01:09.769 [http-nio-16731-exec-9] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 16秒
+2025-07-05 11:01:18.341 [http-nio-16731-exec-1] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 9秒
+2025-07-05 11:01:32.953 [http-nio-16731-exec-4] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 3秒
+2025-07-05 11:01:43.671 [http-nio-16731-exec-9] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 7秒
+2025-07-05 11:01:57.916 [http-nio-16731-exec-6] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 8秒
+2025-07-05 11:02:02.017 [http-nio-16731-exec-8] INFO  browse - 用户ID: test1, 书籍ID: 131, 停留时间: 4秒
+2025-07-05 16:39:09.499 [http-nio-16731-exec-3] INFO  browse - 用户ID: 10000001, 书籍ID: 2, 停留时间: 90秒
+2025-07-05 16:44:30.768 [http-nio-16731-exec-2] INFO  browse - 用户ID: 10000001, 书籍ID: 2, 停留时间: 90秒
