@@ -17,9 +17,9 @@ public interface UserService extends IService<User> {
     void recordBrowseTime(int bookId,int timeInSeconds);
     void commentBook(CommentDto commentDto);
     List<CommentVO_> myComments();
-    void upvoteComment(Integer commentId);
 
-    void undoVoteComment(Integer commentId);
+    void upvoteComment(Long commentId);
+//    void undoVoteComment(Long commentId);
 
 
 }

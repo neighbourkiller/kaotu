@@ -50,9 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User selected = userMapper.selectById(user.getUserId());
         if (selected != null)
             throw new BaseException("账号已存在");
-        if(!PasswordUtil.isUserIdValid(user.getUserId()))
+        if (!PasswordUtil.isUserIdValid(user.getUserId()))
             throw new BaseException("账号格式不正确");
-        if(!PasswordUtil.isValid(user.getPassword()))
+        if (!PasswordUtil.isValid(user.getPassword()))
             throw new BaseException("密码格式不正确");
 
         user.setUsername("用户" + user.getUserId());
@@ -62,15 +62,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(hashPassword(user.getPassword(), salt));
 
         int insert = userMapper.insert(user);
-        if (insert==0)
+        if (insert == 0)
             throw new BaseException("系统错误");
-        Map<String,Object> claims=new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getUserId());
         return JwtUtil.createJWT(jwtProperties.getSecretKey(), jwtProperties.getTtl(), claims);
     }
 
     /**
      * 用户登录
+     *
      * @param user 包含用户ID和本次输入的密码
      * @return 登录成功后返回JWT
      */
@@ -118,8 +119,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 使用SHA-256对密码进行哈希处理
+     *
      * @param password 原始密码
-     * @param salt 盐值
+     * @param salt     盐值
      * @return 哈希后的密码
      */
     private String hashPassword(String password, String salt) {
@@ -143,15 +145,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BaseException("系统错误，无法加密密码");
         }
     }
-    private static final Logger logger= LoggerFactory.getLogger("browse");
+
+    private static final Logger logger = LoggerFactory.getLogger("browse");
 
     @Override
-    public void modifyUsername(String userId, String username){
+    public void modifyUsername(String userId, String username) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BaseException("用户不存在");
         }
-        if(username==null || username.isEmpty()) {
+        if (username == null || username.isEmpty()) {
             throw new BaseException("用户名不能为空");
         }
         // TODO 审核用户名
@@ -182,18 +185,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void commentBook(CommentDto commentDto) {
 
         log.info("用户ID: {}, 评论书籍ID: {}, 评论内容: {}", UserContext.getUserId(), commentDto.getBookId(), commentDto.getContent());
-        if(!commentDto.getUserId().equals(UserContext.getUserId())) {
+        if (!commentDto.getUserId().equals(UserContext.getUserId())) {
             log.error("评论失败，用户ID不匹配: 用户ID={}, 当前登录用户ID={}", commentDto.getUserId(), UserContext.getUserId());
             throw new BaseException("评论失败，用户ID不匹配");
         }
-        if(commentDto.getStar()<1 || commentDto.getStar()>5) {
+        if (commentDto.getStar() < 1 || commentDto.getStar() > 5) {
             throw new BaseException("评论失败，星级必须在1到5之间");
         }
-        if (commentDto.getContent()==null) {
+        if (commentDto.getContent() == null) {
             throw new BaseException("评论内容不能为空");
         }
         Comment comment = new Comment();
-        BeanUtils.copyProperties(commentDto,comment);
+        BeanUtils.copyProperties(commentDto, comment);
         comment.setCommentTime(LocalDateTime.now());
         log.info(comment.toString());
         commentMapper.insert(comment);
@@ -201,23 +204,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 获取当前用户的评论列表
+     *
      * @return List<CommentVO> 包含评论信息的视图对象列表
      */
     @Override
     public List<CommentVO_> myComments() {
         // 搜索评论
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Comment::getUserId,UserContext.getUserId())
+        queryWrapper.eq(Comment::getUserId, UserContext.getUserId())
                 .eq(Comment::getStatus, Status.ENABLE)
                 .orderByDesc(Comment::getCommentTime);
         List<Comment> comments = commentMapper.selectList(queryWrapper);
-        if(comments.isEmpty())
+        if (comments.isEmpty())
             return null;
         User user = userMapper.selectById(UserContext.getUserId());
         String username = user.getUsername();
         return comments.stream().map(comment -> {
             CommentVO_ commentVO = new CommentVO_();
-            BeanUtils.copyProperties(comment,commentVO);
+            BeanUtils.copyProperties(comment, commentVO);
             Book book = bookMapper.selectById(comment.getBookId());
             if (book != null) {
                 commentVO.setTitle(book.getTitle());
@@ -225,9 +229,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 设置用户名
             commentVO.setUsername(username);
             // 设置是否点赞评论
-            if(commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
+            if (commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
                     .eq(CommentLike::getCommentId, comment.getId())
-                    .eq(CommentLike::getUserId, UserContext.getUserId()))==null)
+                    .eq(CommentLike::getUserId, UserContext.getUserId())) == null)
                 commentVO.setIsUpvoted(0);
             else commentVO.setIsUpvoted(1);
 
@@ -241,14 +245,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public void upvoteComment(Integer commentId) {
+    public void upvoteComment(Long commentId) {
 
         // 检查是否已经点赞
         CommentLike one = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
                 .eq(CommentLike::getUserId, UserContext.getUserId())
                 .eq(CommentLike::getCommentId, commentId));
         if (one != null) {
-            throw new BaseException("已点赞，不能重复点赞");
+            log.info("已点赞，则取消点赞");
+            int delete = commentLikeMapper.deleteById(one.getId());
+            if (delete == 0) {
+                throw new BaseException("取消点赞失败，系统错误");
+            }
+            int i = commentMapper.updateCommentUps(commentId, -1);
+            if (i == 0) {
+                throw new BaseException("取消点赞失败，系统错误");
+            }
+            return;
         }
         // 插入点赞记录
         CommentLike commentLike = new CommentLike();
@@ -266,9 +279,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
-    @Override
+/*    @Override
     @Transactional
-    public void undoVoteComment(Integer commentId){
+    public void undoVoteComment(Long commentId){
         CommentLike one = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
                 .eq(CommentLike::getUserId, UserContext.getUserId())
                 .eq(CommentLike::getCommentId, commentId));
@@ -283,5 +296,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (i == 0) {
             throw new BaseException("取消点赞失败，系统错误");
         }
-    }
+    }*/
+
 }

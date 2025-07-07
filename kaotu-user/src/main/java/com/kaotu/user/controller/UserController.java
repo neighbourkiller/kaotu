@@ -192,8 +192,10 @@ public class UserController {
 
     @GetMapping("/upvote")
     @Operation(summary = "点赞评论", description = "用户对评论进行点赞")
-    public Result upvoteComment(@RequestParam("commentId") Integer commentId) {
+    public Result upvoteComment(@RequestParam("commentId") Long commentId) {
+
         try {
+//            synchronized ()
             userService.upvoteComment(commentId);
             return Result.success();
         } catch (BaseException e) {
@@ -202,9 +204,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/upvote")
+/*    @DeleteMapping("/upvote")
     @Operation(summary = "取消点赞评论", description = "用户取消对评论的点赞")
-    public Result undoVoteComment(@RequestParam("commentId") Integer commentId) {
+    public Result undoVoteComment(@RequestParam("commentId") Long commentId) {
         try {
             userService.undoVoteComment(commentId);
             return Result.success();
@@ -212,5 +214,5 @@ public class UserController {
             log.error("Error undoing upvote on comment: {}", e.getMessage());
             return Result.error(e.getMessage());
         }
-    }
+    }*/
 }

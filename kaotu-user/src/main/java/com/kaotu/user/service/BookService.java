@@ -84,5 +84,5 @@ public interface BookService extends IService<Book> {
 
     List<BookVO> getCollectBooks();
 
-    List<CommentVO_> getCommentsByBookId(Integer bookId, String userId);
+    List<CommentVO_> getCommentsByBookId(Integer bookId);
 }

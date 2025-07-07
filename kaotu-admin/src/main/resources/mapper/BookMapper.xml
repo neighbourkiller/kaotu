@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kaotu.admin.mapper.BookMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.kaotu.base.model.po.Book">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="publisher" property="publisher"/>
+        <result column="comments" property="comments"/>
+        <result column="book_url" property="bookUrl"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="sub_category_id" property="subCategoryId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, publisher, comments, book_url, img_url, sub_category_id
+    </sql>
+    <select id="getBookVOList" resultType="com.kaotu.base.model.vo.BookVO">
+        SELECT b.id,
+               b.title,
+               b.publisher,
+               b.comments,
+               b.book_url,
+               b.img_url,
+               b.sub_category_id,
+               bc.category_name
+        FROM book b
+                 LEFT JOIN
+             book_category bc ON b.sub_category_id = bc.id
+            ${ew.customSqlSegment}
+    </select>
+
+
+    <resultMap id="CategoryWithSubCategoriesMap" type="com.kaotu.base.model.vo.CategoryVO">
+        <!-- 将父分类的列映射到 CategoryVO 的属性 -->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+
+        <collection
+                property="subCategory"
+                ofType="com.kaotu.base.model.vo.SubCategoryVO"
+                column="{parentId=id, userId=userId}"
+                select="com.kaotu.user.mapper.BookMapper.selectSubCategoriesByParentId">
+        </collection>
+    </resultMap>
+
+    <select id="getAllCategories" resultMap="CategoryWithSubCategoriesMap">
+        SELECT id, name,#{userId} AS userId
+        FROM parent_category
+        order by id
+    </select>
+    <select id="selectSubCategoriesByParentId" resultType="com.kaotu.base.model.vo.SubCategoryVO">
+        SELECT
+            bc.id,
+            bc.category_name,
+            bc.parent_category,
+            CASE WHEN ut.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_selected
+        FROM
+            book_category bc
+        LEFT JOIN
+            user_tag ut ON bc.id = ut.tag_id AND ut.user_id = #{userId}
+        WHERE
+            bc.parent_category = #{parentId}
+    </select>
+    <select id="getBookVOList2" resultType="com.kaotu.base.model.vo.BookVO">
+        SELECT b.id,
+               b.title,
+               b.publisher,
+               b.comments,
+               b.book_url,
+               b.img_url,
+               b.sub_category_id,
+               bc.category_name
+        FROM book b
+                 LEFT JOIN
+             book_category bc ON b.sub_category_id = bc.id
+            ${ew.customSqlSegment}
+    </select>
+
+
+</mapper>

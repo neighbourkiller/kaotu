@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -98,5 +99,16 @@ class KaotuUserApplicationTests {
         for (LogData data : parsedData) {
             System.out.println("用户ID: " + data.userId() + ", 停留时间: " + data.duration() + "ms");
         }*/
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Test
+    public void testRedis(){
+//        redisTemplate.opsForValue().set("key","value");
+        redisTemplate.delete("key");
+        String value = (String) redisTemplate.opsForValue().get("key");
+        System.out.println(value);
+
+    }
 
 }

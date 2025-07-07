@@ -20,7 +20,7 @@ import java.util.List;
 public interface CommentMapper extends BaseMapper<Comment> {
 
     @Update("update comment  set ups=ups + #{change} where id = #{id}")
-    int updateCommentUps(@Param("id") int commentId,@Param("change") int upsChange);
+    int updateCommentUps(@Param("id") Long commentId,@Param("change") int upsChange);
 
     @Select("    SELECT c.id AS comment_id, c.content, c.comment_time,c.user_id,IFNULL(u.username, '已注销用户') AS username,b.title AS book_title," +
             "CASE WHEN cl.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_upvoted FROM comment c LEFT JOIN user u ON c.user_id = u.user_id " +

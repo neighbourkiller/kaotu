@@ -4,15 +4,22 @@ package com.kaotu.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.kaotu.admin.mapper.BookMapper;
 import com.kaotu.admin.mapper.UserMapper;
+import com.kaotu.admin.model.dto.CommentByBookIdDto;
+import com.kaotu.admin.model.dto.CommentStatus;
+import com.kaotu.admin.model.dto.SearchPageDto;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.admin.mapper.AdminMapper;
 import com.kaotu.base.model.dto.PageParams;
 import com.kaotu.base.model.dto.UserUpdateDto;
 import com.kaotu.base.model.po.Admin;
 import com.kaotu.admin.service.AdminService;
+import com.kaotu.base.model.po.Book;
+import com.kaotu.base.model.po.Comment;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.BookVO;
+import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.model.vo.UserInfo;
 import com.kaotu.base.result.PageResult;
 import com.kaotu.base.utils.JwtUtil;
@@ -21,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,4 +129,65 @@ public class AdminServiceImpl implements AdminService {
         Page<BookVO> bookVOPage = adminMapper.selectBookPageWithCategory(page, queryWrapper);
         return new PageResult<>(bookVOPage.getRecords(), bookVOPage.getTotal(), pageParams.getPageNo(), pageParams.getPageSize());
     }
+
+    @Autowired
+    private BookMapper bookMapper;
+
+    @Override
+    @Transactional
+    public void modifyBook(Book book) {
+        int i = bookMapper.updateById(book);
+        if (i == 0) {
+            throw new BaseException("修改书籍信息失败");
+        } else {
+            log.info("修改书籍信息成功: {}", book);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteBook(Integer bookId) {
+        int i = bookMapper.deleteById(bookId);
+        if (i == 0) {
+            throw new BaseException("删除书籍失败");
+        } else {
+            log.info("删除书籍成功，书籍ID: {}", bookId);
+        }
+    }
+
+    @Override
+    public PageResult<CommentVO> commentsPage(SearchPageDto searchPageDto) {
+        Page<CommentVO> page = new Page<>(searchPageDto.getPageNo(), searchPageDto.getPageSize());
+        QueryWrapper<Book> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(searchPageDto.getTitle() != null, "b.title", searchPageDto.getTitle())
+                .like(searchPageDto.getPublisher() != null, "b.publisher", searchPageDto.getPublisher());
+        IPage<CommentVO> commentVOPage = adminMapper.selectCommentPage(page, queryWrapper);
+        return new PageResult<>(commentVOPage.getRecords(), commentVOPage.getTotal(), searchPageDto.getPageNo(), searchPageDto.getPageSize());
+    }
+
+    @Override
+    public PageResult<CommentVO> commentsPageByBookId(CommentByBookIdDto commentByBookIdDto) {
+        Page<CommentVO> page = new Page<>(commentByBookIdDto.getPageNo(), commentByBookIdDto.getPageSize());
+        QueryWrapper<Book> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(commentByBookIdDto.getBookId() != null, "b.id", commentByBookIdDto.getBookId());
+        IPage<CommentVO> commentVOPage = adminMapper.selectCommentPage(page, queryWrapper);
+        return new PageResult<>(commentVOPage.getRecords(), commentVOPage.getTotal(), commentByBookIdDto.getPageNo(), commentByBookIdDto.getPageSize());
+    }
+
+    @Override
+    public void updateCommentStatus(CommentStatus commentStatus) {
+        Comment comment = adminMapper.selectCommentById(commentStatus.getId());
+        if (comment == null) {
+            throw new BaseException("评论不存在");
+        }
+        comment.setStatus(commentStatus.getStatus());
+        int rows = adminMapper.updateCommentById(comment);
+        if (rows == 0) {
+            throw new BaseException("更新评论状态失败");
+        } else {
+            log.info("更新评论状态成功，评论ID: {}, 新状态: {}", commentStatus.getId(), commentStatus.getStatus());
+        }
+    }
+
+
 }

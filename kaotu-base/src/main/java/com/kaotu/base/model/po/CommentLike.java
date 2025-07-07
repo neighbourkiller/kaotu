@@ -23,7 +23,7 @@ public class CommentLike implements Serializable {
     */
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
     /**
     * 
     */
@@ -31,7 +31,7 @@ public class CommentLike implements Serializable {
     /**
     * 
     */
-    private Integer commentId;
+    private Long commentId;
     /**
     * 
     */

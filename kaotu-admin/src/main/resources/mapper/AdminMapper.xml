@@ -21,6 +21,22 @@
             book_category bc ON b.sub_category_id = bc.id
             ${ew.customSqlSegment}
     </select>
+    <select id="selectCommentPage" resultType="com.kaotu.base.model.vo.CommentVO">
+        SELECT c.id,
+               c.book_id,
+               c.user_id,
+               c.content,
+               c.comment_time,
+               c.star,
+               c.status,
+               c.ups,
+               b.title,
+               u.username
+        FROM comment c
+                 LEFT JOIN user u ON c.user_id = u.user_id
+                 LEFT JOIN book b ON c.book_id = b.id
+            ${ew.customSqlSegment}
+    </select>
 
 
 </mapper>

@@ -1,5 +1,8 @@
 package com.kaotu.admin.controller;
 
+import com.kaotu.admin.model.dto.CommentByBookIdDto;
+import com.kaotu.admin.model.dto.CommentStatus;
+import com.kaotu.admin.model.dto.SearchPageDto;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PageParams;
 import com.kaotu.base.model.dto.UserUpdateDto;
@@ -7,6 +10,7 @@ import com.kaotu.base.model.po.Admin;
 import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.BookVO;
+import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.result.PageResult;
 import com.kaotu.base.result.Result;
 import com.kaotu.admin.service.AdminService;
@@ -79,5 +83,64 @@ public class AdminController {
     public PageResult<BookVO> listBooks(@RequestBody PageParams pageParams){
         log.info("获取书籍列表，分页参数: {}", pageParams);
         return  adminService.listBooks(pageParams);
+    }
+
+    @PutMapping("/book/modify")
+    @Operation(summary = "修改书籍信息", description = "修改指定书籍的信息")
+    public Result modifyBook(@RequestBody Book book) {
+        try {
+            adminService.modifyBook(book);
+            return Result.success();
+        } catch (BaseException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/book")
+    @Operation(summary = "删除书籍", description = "根据书籍ID删除指定书籍")
+    public Result deleteBook(@RequestParam Integer bookId) {
+        try {
+            adminService.deleteBook(bookId);
+            return Result.success();
+        } catch (BaseException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/book/comments")
+    @Operation(summary = "分页查询评论", description = "分页查询书籍评论")
+    public PageResult<CommentVO> commentsPage(@RequestBody SearchPageDto searchPageDto){
+        log.info("分页查询评论，参数: {}", searchPageDto);
+        try {
+            return adminService.commentsPage(searchPageDto);
+        } catch (BaseException e) {
+            log.error("查询评论失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @PostMapping("/book/comment")
+    @Operation(summary = "根据bookId查询评论",description = "根据书籍ID分页查询评论")
+    public PageResult<CommentVO> commentsByBookId(@RequestBody CommentByBookIdDto commentByBookIdDto) {
+        log.info("根据bookId查询评论，参数: {}", commentByBookIdDto);
+        try {
+            return adminService.commentsPageByBookId(commentByBookIdDto);
+        } catch (BaseException e) {
+            log.error("查询评论失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @PutMapping("/book/comment")
+    @Operation(summary = "更新评论状态", description = "更新指定评论的状态")
+    public Result updateCommentStatus(@RequestBody CommentStatus commentStatus) {
+        try {
+            log.info("更新评论状态，参数: {}", commentStatus);
+            adminService.updateCommentStatus(commentStatus);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("更新评论状态失败: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
     }
 }

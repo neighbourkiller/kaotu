@@ -83,7 +83,7 @@ public class BookController {
     @Operation(summary = "获取书籍评论", description = "根据书籍ID获取评论列表")
     public Result<List<CommentVO_>> getCommentsByBookId(@RequestParam("bookId") Integer bookId) {
         try {
-            List<CommentVO_> comments = bookService.getCommentsByBookId(bookId,UserContext.getUserId());
+            List<CommentVO_> comments = bookService.getCommentsByBookId(bookId);
             return Result.success(comments);
         } catch (BaseException e) {
             return Result.error("获取书籍评论失败: " + e.getMessage());

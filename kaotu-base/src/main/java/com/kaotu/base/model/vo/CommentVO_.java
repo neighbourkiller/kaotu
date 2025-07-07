@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class CommentVO_ {
-    private Integer id;
+    private Long id;
     private Integer bookId;
     private String userId;
     private String content;

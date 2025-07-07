@@ -212,15 +212,16 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     private CommentLikeMapper commentLikeMapper;
 
     @Override
-    public List<CommentVO_> getCommentsByBookId(Integer bookId, String userId) {
+    public List<CommentVO_> getCommentsByBookId(Integer bookId) {
         if (bookId == null || bookId <= 0) {
             throw new BaseException("无效的书籍ID");
         }
         List<Comment> comments = commentMapper.selectList(new LambdaQueryWrapper<Comment>()
                 .eq(Comment::getBookId, bookId)
                 .eq(Comment::getStatus, Status.ENABLE)); // 只查询状态为1的评论);
-
-        if (!userId.isEmpty())
+        String userId = UserContext.getUserId();
+        log.info("获取书籍ID为 {} 的评论，当前用户ID: {}", bookId, userId);
+        if (!(userId==null)) // 如果用户ID不为空
             return comments.stream().map(comment -> {
                 CommentVO_ commentVO = new CommentVO_();
                 BeanUtils.copyProperties(comment, commentVO);
@@ -261,7 +262,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
                 commentVO.setUsername(USER.WRITEOFF_USER); // 如果用户不存在，则已注销
             }
             // 设置点赞状态为0（未点赞）
-            commentVO.setIsUpvoted(1);
+            commentVO.setIsUpvoted(0);
             return commentVO;
         }).collect(Collectors.toList());
     }

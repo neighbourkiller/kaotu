@@ -25,6 +25,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         log.info("token:{}", token);
         if (token == null || !token.startsWith("Bearer ")) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return  false;
         }
         // 2. 校验令牌

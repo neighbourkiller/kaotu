@@ -7,17 +7,7 @@ spring:
     url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
-    driver-class-name: com.mysql.jdbc.Driver
 kaotu:
   jwt:
     secret-key: itkaotu-admin
     ttl: 3600000 # 1 hour
-#swagger:
-#  base-package: com.kaotu.admin.controller
-#  title: 管理员服务接口
-#  description: 管理员服务接口文档
-#  version: 1.0
-#  contact:
-#    name: killer
-#    url: https://github.com/neighbourkiller
-#    email: example@example.com

@@ -7,7 +7,10 @@ spring:
     url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
-
+  redis:
+    host: localhost
+    port: 16729
+    password: 123456
 kaotu:
   jwt:
     secret-key: itkaotu
