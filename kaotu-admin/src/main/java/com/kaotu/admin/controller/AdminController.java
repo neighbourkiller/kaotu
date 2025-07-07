@@ -3,6 +3,7 @@ package com.kaotu.admin.controller;
 import com.kaotu.admin.model.dto.CommentByBookIdDto;
 import com.kaotu.admin.model.dto.CommentStatus;
 import com.kaotu.admin.model.dto.SearchPageDto;
+import com.kaotu.admin.model.dto.UserPageDto;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PageParams;
 import com.kaotu.base.model.dto.UserUpdateDto;
@@ -32,6 +33,7 @@ public class AdminController {
     @PostMapping("/login")
     @Operation(summary = "管理员登录", description = "管理员通过用户名和密码登录，成功后返回JWT令牌")
     public Result<String> login(@RequestBody Admin admin){
+        log.info("登录请求，管理员信息: {}", admin);
         try {
             String token = adminService.login(admin);
             if (token != null) {
@@ -47,9 +49,9 @@ public class AdminController {
 
     @PostMapping("/user/list")
     @Operation(summary = "获取用户列表", description = "分页获取用户列表")
-    public PageResult<User> listUsers(@RequestBody PageParams pageParams){
+    public PageResult<User> listUsers(@RequestBody UserPageDto userPageDto){
 
-        PageResult<User> result= adminService.listUsers(pageParams);
+        PageResult<User> result= adminService.listUsers(userPageDto);
         log.info(result.toString());
         return result;
     }
@@ -57,6 +59,8 @@ public class AdminController {
     @PutMapping("/user")
     @Operation(summary = "更新用户信息", description = "更新指定用户的信息")
     public Result updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+        log.info("更新用户信息，参数: {}", userUpdateDto);
+
         try {
             adminService.updateUser(userUpdateDto);
             return Result.success();
@@ -80,7 +84,7 @@ public class AdminController {
 
     @PostMapping("/book/list")
     @Operation(summary = "获取书籍列表", description = "分页获取书籍列表")
-    public PageResult<BookVO> listBooks(@RequestBody PageParams pageParams){
+    public PageResult<BookVO> listBooks(@RequestBody SearchPageDto pageParams){
         log.info("获取书籍列表，分页参数: {}", pageParams);
         return  adminService.listBooks(pageParams);
     }
@@ -140,6 +144,19 @@ public class AdminController {
             return Result.success();
         } catch (BaseException e) {
             log.error("更新评论状态失败: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/book/comment")
+    @Operation(summary = "删除评论", description = "根据评论ID删除指定评论")
+    public Result deleteComment(@RequestParam Long commentId) {
+        try {
+            log.info("删除评论，评论ID: {}", commentId);
+            adminService.deleteComment(commentId);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("删除评论失败: {}", e.getMessage());
             return Result.error(e.getMessage());
         }
     }

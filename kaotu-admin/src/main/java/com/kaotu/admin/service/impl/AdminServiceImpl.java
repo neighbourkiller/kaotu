@@ -1,7 +1,9 @@
 package com.kaotu.admin.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kaotu.admin.mapper.BookMapper;
@@ -9,6 +11,7 @@ import com.kaotu.admin.mapper.UserMapper;
 import com.kaotu.admin.model.dto.CommentByBookIdDto;
 import com.kaotu.admin.model.dto.CommentStatus;
 import com.kaotu.admin.model.dto.SearchPageDto;
+import com.kaotu.admin.model.dto.UserPageDto;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.admin.mapper.AdminMapper;
 import com.kaotu.base.model.dto.PageParams;
@@ -73,12 +76,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public PageResult<User> listUsers(PageParams pageParams) {
-        Page<User> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
+    public PageResult<User> listUsers(UserPageDto userPageDto) {
+        Page<User> page = new Page<>(userPageDto.getPageNo(), userPageDto.getPageSize());
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("user_id", "username", "email", "unblock_time", "create_date", "last_login");
+        queryWrapper.select("user_id", "username", "email", "unblock_time", "create_date", "last_login")
+                .like(userPageDto.getUserId() != null, "user_id", userPageDto.getUserId());
         Page<User> pageResult = userMapper.selectPage(page, queryWrapper);
-        return new PageResult<>(pageResult.getRecords(), pageResult.getTotal(), pageParams.getPageNo(), pageParams.getPageSize());
+        return new PageResult<>(pageResult.getRecords(), pageResult.getTotal(), userPageDto.getPageNo(), userPageDto.getPageSize());
     }
 
     @Override
@@ -123,9 +127,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public PageResult<BookVO> listBooks(PageParams pageParams) {
+    public PageResult<BookVO> listBooks(SearchPageDto pageParams) {
         Page<BookVO> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
         QueryWrapper<BookVO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(pageParams.getTitle() != null, "title", pageParams.getTitle())
+                .like(pageParams.getPublisher() != null, "publisher", pageParams.getPublisher());
         Page<BookVO> bookVOPage = adminMapper.selectBookPageWithCategory(page, queryWrapper);
         return new PageResult<>(bookVOPage.getRecords(), bookVOPage.getTotal(), pageParams.getPageNo(), pageParams.getPageSize());
     }
@@ -152,6 +158,15 @@ public class AdminServiceImpl implements AdminService {
             throw new BaseException("删除书籍失败");
         } else {
             log.info("删除书籍成功，书籍ID: {}", bookId);
+        }
+        // 设置评论状态
+        LambdaUpdateWrapper<Comment> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(Comment::getBookId, bookId).set(Comment::getStatus, 0);
+        int rows = adminMapper.updateCommentStatusByBookId(lambdaUpdateWrapper);
+        if (rows == 0) {
+            throw new BaseException("更新书籍评论状态失败");
+        } else {
+            log.info("更新书籍评论状态成功，书籍ID: {}, 更新的评论数: {}", bookId, rows);
         }
     }
 
@@ -189,5 +204,27 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId){
+        Comment comment = adminMapper.selectCommentById(commentId);
+        if (comment == null) {
+            throw new BaseException("评论不存在");
+        }
+        Book book = bookMapper.selectById(comment.getBookId());
+        int rows = adminMapper.deleteCommentById(commentId);
+        if (rows == 0) {
+            throw new BaseException("删除评论失败");
+        } else {
+            log.info("删除评论成功，评论ID: {}", commentId);
+        }
+        int i = bookMapper.updateCommentCount(book.getId(), -1);
+        if (i == 0) {
+            throw new BaseException("更新书籍评论数失败");
+        } else {
+            log.info("更新书籍评论数成功，书籍ID: {}, 当前评论数: {}", book.getId(), book.getComments());
+        }
+    }
 
 }

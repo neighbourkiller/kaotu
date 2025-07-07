@@ -20,6 +20,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("url:{}", request.getRequestURI());
         // 1. 从请求头中获取令牌
         // 这里的 "token" 是前后端约定好的请求头名称
         String token = request.getHeader("Authorization");
@@ -30,7 +31,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
         // 2. 校验令牌
         try {
-            log.info("jwt校验:{}", token);
+            log.info("开始jwt校验");
             Claims claims = JwtUtil.parseJWT(jwtProperties.getSecretKey(), token.substring(7));
             if(claims.get("adminId")==null){
                 log.error("令牌校验不通过");

@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kaotu.admin.mapper.AdminMapper">
+    <update id="updateCommentStatusByBookId">
+        UPDATE comment
+        SET status = #{status}
+        WHERE book_id = #{bookId}
+    </update>
 
 
     <select id="selectBookPageWithCategory" resultType="com.kaotu.base.model.vo.BookVO">

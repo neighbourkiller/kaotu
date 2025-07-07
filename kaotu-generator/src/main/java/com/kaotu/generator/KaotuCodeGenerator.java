@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class KaotuCodeGenerator {
     // TODO 修改服务名以及数据表名
-    private static final String SERVICE_NAME = "book";
+    private static final String SERVICE_NAME = "base";
 
     //数据库账号
     private static final String DATA_SOURCE_USER_NAME = "root";
@@ -22,17 +22,7 @@ public class KaotuCodeGenerator {
     private static final String DATA_SOURCE_PASSWORD = "123456";
     //生成的表
     private static final String[] TABLE_NAMES = new String[]{
-//            "mq_message",
-//            "mq_message_history",
-//            "course_base",
-//            "course_market",
-//            "teachplan",
-//            "teachplan_media",
-//            "course_teacher",
-//            "course_category",
-//            "course_publish",
-//            "course_publish_pre"
-            "comment_like"
+            "user_post_collection"
     };
 
     // TODO 默认生成entity，需要生成DTO修改此变量

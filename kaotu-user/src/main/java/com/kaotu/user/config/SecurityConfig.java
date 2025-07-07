@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .csrf().disable() // 禁用 CSRF 保护
                 .authorizeRequests()
                 .antMatchers("/user/user/login", "/user/user/register","/user/book/**").permitAll() // 允许登录和注册接口不需要认证
+                .antMatchers("/user/post/tags","/user/post/detail","/user/post/recommend").permitAll()
                 .anyRequest().authenticated() // 其他请求需要认证
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class); // 添加 JWT 过滤器

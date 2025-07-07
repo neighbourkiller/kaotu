@@ -10,6 +10,7 @@ import com.kaotu.base.model.vo.SubCategoryVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -41,4 +42,6 @@ public interface BookMapper extends BaseMapper<Book> {
 
     List<SubCategoryVO> selectSubCategoriesByParentId(@Param("parentId") Integer parentId,@Param("userId") String userId);
 
+    @Update("UPDATE kaotu.book SET comments= comments + #{i} WHERE id = #{id}")
+    int updateCommentCount(@Param("id") Integer id,@Param("i") int i);
 }

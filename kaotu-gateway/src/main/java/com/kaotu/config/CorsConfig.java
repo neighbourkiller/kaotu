@@ -9,10 +9,10 @@ import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.util.Collections;
 
-//@Configuration
+@Configuration
 public class CorsConfig {
 
-//    @Bean
+    @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         // 推荐使用 setAllowedOriginPatterns 支持通配符，比 setAllowedOrigins 更灵活
@@ -21,10 +21,8 @@ public class CorsConfig {
         config.setAllowedHeaders(Collections.singletonList("*")); // 允许所有请求头
         config.setAllowCredentials(true); // 允许携带 cookie
         config.setMaxAge(3600L); // 预检请求的有效期
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
         source.registerCorsConfiguration("/**", config); // 对所有路径应用该配置
-
         return new CorsWebFilter(source);
     }
 }

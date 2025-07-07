@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class CommentStatus {
     private Long id;
-    private Integer Status;
+    private Integer status;
 }

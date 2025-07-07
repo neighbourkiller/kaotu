@@ -89,9 +89,19 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         if (bookId == null || bookId <= 0) {
             throw new BaseException("无效的书籍ID");
         }
+        // 检查当前用户是否已收藏此书籍
         if (favoriteMapper.selectOne(new LambdaQueryWrapper<Favorite>().eq(Favorite::getBookId, bookId)
                 .eq(Favorite::getUserId, UserContext.getUserId())) != null) {
-            throw new BaseException("您已经收藏过此书籍");
+            // 取消收藏
+            int delete = favoriteMapper.delete(new LambdaQueryWrapper<Favorite>()
+                    .eq(Favorite::getBookId, bookId)
+                    .eq(Favorite::getUserId, UserContext.getUserId()));
+            if (delete <= 0) {
+                throw new BaseException("取消收藏书籍失败，请稍后再试");
+            } else {
+                log.info("用户ID: {} 取消收藏书籍ID: {}", UserContext.getUserId(), bookId);
+                return;
+            }
         }
 
         Favorite favorite = new Favorite();

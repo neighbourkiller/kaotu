@@ -2,6 +2,7 @@ package com.kaotu.admin.mapper;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kaotu.base.model.po.Admin;
@@ -9,10 +10,7 @@ import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.po.Comment;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CommentVO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface AdminMapper extends BaseMapper<Admin> {
@@ -29,4 +27,10 @@ public interface AdminMapper extends BaseMapper<Admin> {
 
     @Update("UPDATE kaotu.comment SET status = #{status} WHERE id = #{id}")
     int updateCommentById(Comment comment);
+
+    @Delete("DELETE FROM kaotu.comment WHERE id = #{commentId}")
+    int deleteCommentById(Long commentId);
+
+
+    int updateCommentStatusByBookId(LambdaUpdateWrapper<Comment> lambdaUpdateWrapper);
 }
