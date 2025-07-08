@@ -1,5 +1,6 @@
 package com.kaotu.user.service;
 
+import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
 import com.kaotu.base.model.po.CommunityPost;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -46,4 +47,24 @@ public interface CommunityPostService extends IService<CommunityPost> {
      * @param postId
      */
     void collectPost(Long postId);
+
+    /**
+     * 获取用户收藏的帖子列表
+     * @return List<PostVO>
+     */
+    List<PostVO> getCollectedPosts();
+
+    /**
+     * 评论帖子
+     * @param commentDto
+     */
+    void commentPost(PostCommentDto commentDto);
+
+    List<PostVO> getRecommendedPosts();
+
+    void removePostById(Long postId);
+
+    void removeCommentById(Long commentId);
+
+    void recordPostView(Long postId, Integer time);
 }

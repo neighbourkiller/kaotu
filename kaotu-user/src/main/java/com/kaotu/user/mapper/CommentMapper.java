@@ -3,6 +3,7 @@ package com.kaotu.user.mapper;
 import com.kaotu.base.model.po.Comment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.kaotu.base.model.vo.CommentVO_;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author killer
  * @since 2025-07-03
  */
+@Mapper
 public interface CommentMapper extends BaseMapper<Comment> {
 
     @Update("update comment  set ups=ups + #{change} where id = #{id}")

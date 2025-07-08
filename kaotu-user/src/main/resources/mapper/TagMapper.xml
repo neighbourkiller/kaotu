@@ -15,7 +15,7 @@
         id, name, category_id, create_time
     </sql>
     <select id="getAllTags" resultType="com.kaotu.base.model.vo.PostTagVO">
-        SELECT t.*,pc.name from kaotu.tag t LEFT JOIN kaotu.parent_category pc on t.category_id=pc.id;
+        SELECT t.*,pc.name category_name from kaotu.tag t LEFT JOIN kaotu.parent_category pc on t.category_id=pc.id order by t.category_id;
     </select>
 
 </mapper>

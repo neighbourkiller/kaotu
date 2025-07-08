@@ -49,6 +49,7 @@
     <select id="getAllCategories" resultMap="CategoryWithSubCategoriesMap">
         SELECT id, name,#{userId} AS userId
         FROM parent_category
+        where id &lt;=2
         order by id
     </select>
     <select id="selectSubCategoriesByParentId" resultType="com.kaotu.base.model.vo.SubCategoryVO">

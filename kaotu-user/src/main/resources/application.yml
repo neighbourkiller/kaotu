@@ -14,6 +14,6 @@ spring:
 kaotu:
   jwt:
     secret-key: itkaotu
-    ttl: 7200000
+    ttl: 172800000 # 2 days in milliseconds
 logging:
   config: classpath:logback.xml

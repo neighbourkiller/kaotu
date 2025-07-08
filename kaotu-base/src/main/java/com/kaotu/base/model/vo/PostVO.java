@@ -21,7 +21,7 @@ public class PostVO {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
-    private String userName;
+    private String username;
     private List<Integer> tagIds;
 
     private Boolean isLiked;

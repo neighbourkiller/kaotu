@@ -1,0 +1,5 @@
+2025-07-07 23:02:48.553 [http-nio-16731-exec-1] INFO  other - 用户id: null 浏览-帖子id: 1
+2025-07-07 23:04:40.397 [http-nio-16731-exec-5] INFO  other - 用户id: 10000000 取消收藏-帖子id: 1
+2025-07-07 23:12:17.001 [http-nio-16731-exec-1] INFO  other - 用户id: 10000000 收藏-帖子id: 1
+2025-07-07 23:34:15.748 [http-nio-16731-exec-2] INFO  other - 用户id: 10000000 取消点赞-帖子id: 1
+2025-07-07 23:34:31.192 [http-nio-16731-exec-5] INFO  other - 用户id: 10000000 点赞-帖子id: 1

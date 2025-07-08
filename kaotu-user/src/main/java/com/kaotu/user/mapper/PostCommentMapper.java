@@ -16,4 +16,10 @@ import org.apache.ibatis.annotations.Update;
 public interface PostCommentMapper extends BaseMapper<PostComment> {
 
     int updateLikeCount(@Param("id") Long targetId,@Param("change") int i);
+
+    @Update("UPDATE kaotu.post_comment SET status = #{status} WHERE post_id = #{postId}")
+    int updateCommentStatus(@Param("postId") Long postId, @Param("status") Boolean status);
+
+    @Update("UPDATE kaotu.post_comment SET status = #{status} WHERE parent_id = #{parentId}")
+    int updateSubCommentStatus(@Param("parentId") Long parentId,@Param("status") Boolean status);
 }
