@@ -4,8 +4,10 @@ import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
 import com.kaotu.base.model.po.CommunityPost;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.kaotu.base.model.vo.PostCommentVO;
 import com.kaotu.base.model.vo.PostTagVO;
 import com.kaotu.base.model.vo.PostVO;
+import com.kaotu.base.model.vo.ViewHistory;
 
 import java.util.List;
 
@@ -60,11 +62,21 @@ public interface CommunityPostService extends IService<CommunityPost> {
      */
     void commentPost(PostCommentDto commentDto);
 
-    List<PostVO> getRecommendedPosts();
+    List<PostVO> getNewestPosts();
 
     void removePostById(Long postId);
 
     void removeCommentById(Long commentId);
 
     void recordPostView(Long postId, Integer time);
+
+    List<PostCommentVO> getCommentsByPostId(Long postId);
+
+    List<ViewHistory> getViewHistory();
+
+    List<PostVO> searchPosts(String keyword);
+
+    List<PostVO> getHotPosts();
+
+    List<Integer> getHotTags();
 }

@@ -22,7 +22,7 @@ public class KaotuCodeGenerator {
     private static final String DATA_SOURCE_PASSWORD = "123456";
     //生成的表
     private static final String[] TABLE_NAMES = new String[]{
-            "post_view_history"
+            "hot_post"
     };
 
     // TODO 默认生成entity，需要生成DTO修改此变量

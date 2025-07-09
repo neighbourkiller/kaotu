@@ -25,4 +25,7 @@ public interface CommunityPostMapper extends BaseMapper<CommunityPost> {
 
     @Update("UPDATE kaotu.community_post SET comment_count = comment_count + #{change} WHERE id = #{id}")
     int updateCommentCount(@Param("id") Long postId,@Param("change") int i);
+
+    @Update("UPDATE kaotu.community_post SET view_count = view_count + #{change} WHERE id = #{id}")
+    int updateViewCount(@Param("id") Long postId,@Param("change") int i);
 }

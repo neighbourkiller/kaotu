@@ -1,6 +1,7 @@
 package com.kaotu.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.kaotu.base.model.dto.RecommendationResponseDTO;
 import com.kaotu.base.model.po.Book;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
@@ -76,10 +77,7 @@ public interface BookService extends IService<Book> {
      *
      * @return List<BookVO> 包含个性化推荐书籍的视图对象列表
      */
-    List<BookVO> getPersonalize();
-
-    List<BookVO> getPersonalize2();
-
+    RecommendationResponseDTO getPersonalize();
 
 
     List<BookVO> getCollectBooks();

@@ -6,20 +6,15 @@ import com.kaotu.base.constant.Status;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.CommentDto;
-import com.kaotu.base.model.po.Book;
-import com.kaotu.base.model.po.Comment;
-import com.kaotu.base.model.po.CommentLike;
-import com.kaotu.base.model.po.User;
+import com.kaotu.base.model.po.*;
 import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.model.vo.CommentVO_;
 import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.utils.JwtUtil;
 import com.kaotu.base.utils.PasswordUtil;
-import com.kaotu.user.mapper.BookMapper;
-import com.kaotu.user.mapper.CommentLikeMapper;
-import com.kaotu.user.mapper.CommentMapper;
-import com.kaotu.user.mapper.UserMapper;
+import com.kaotu.user.mapper.*;
 import com.kaotu.user.service.UserService;
+import io.netty.util.internal.UnstableApi;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,6 +273,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BaseException("点赞失败，系统错误");
         }
     }
+
+    @Autowired
+    private SystemMessageMapper messageMapper;
+
+    @Override
+    public List<SystemMessage> getSystemMessages(String userId) {
+        if(userId==null)
+            return null;
+        List<SystemMessage> messages = messageMapper.selectList(new LambdaQueryWrapper<SystemMessage>()
+                .eq(SystemMessage::getReceiverId, userId)
+                .orderByDesc(SystemMessage::getCreateTime));
+        if (messages.isEmpty()) {
+            return null;
+        }
+        return messages;
+    }
+
+
 
 /*    @Override
     @Transactional

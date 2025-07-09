@@ -2,6 +2,7 @@ package com.kaotu.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kaotu.base.model.dto.CommentDto;
+import com.kaotu.base.model.po.SystemMessage;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.CommentVO_;
 
@@ -19,6 +20,8 @@ public interface UserService extends IService<User> {
     List<CommentVO_> myComments();
 
     void upvoteComment(Long commentId);
+
+    List<SystemMessage> getSystemMessages(String userId);
 //    void undoVoteComment(Long commentId);
 
 

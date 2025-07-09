@@ -2,6 +2,7 @@ package com.kaotu.user.mapper;
 
 import com.kaotu.base.model.po.PostViewHistory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
@@ -17,5 +18,5 @@ import java.time.LocalDateTime;
 public interface PostViewHistoryMapper extends BaseMapper<PostViewHistory> {
 
     @Update("UPDATE kaotu.post_view_history SET view_time=#{now},time_length=time_length +#{time} WHERE id=#{id}")
-    int updateViewTime(Long id, LocalDateTime now, Integer time);
+    int updateViewTime(@Param("id") Long id,@Param("now") LocalDateTime now,@Param("time") Integer time);
 }

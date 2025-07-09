@@ -3,6 +3,8 @@ package com.kaotu.user.controller;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.CommentDto;
+import com.kaotu.base.model.dto.RecommendationResponseDTO;
+import com.kaotu.base.model.po.SystemMessage;
 import com.kaotu.base.model.po.User;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CommentVO;
@@ -142,7 +144,7 @@ public class UserController {
 
     @GetMapping("/personalize")
     @Operation(summary = "获取个性化推荐", description = "获取当前用户的个性化书籍推荐")
-    public Result<List<BookVO>> personalize() {
+    public Result<RecommendationResponseDTO> personalize() {
         log.info("Fetching personalized recommendations for userId: {}", UserContext.getUserId());
         return Result.success(bookService.getPersonalize());
     }
@@ -215,4 +217,20 @@ public class UserController {
             return Result.error(e.getMessage());
         }
     }*/
+
+    @GetMapping("/system")
+    public Result<List<SystemMessage>> getSystemMessages() {
+        log.info("Fetching system messages for userId: {}", UserContext.getUserId());
+        try {
+            List<SystemMessage> messages = userService.getSystemMessages(UserContext.getUserId());
+            return Result.success(messages);
+        } catch (BaseException e) {
+            log.error("Error fetching system messages: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
+
+
+
+
 }

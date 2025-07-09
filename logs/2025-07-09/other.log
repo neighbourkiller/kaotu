@@ -1,0 +1,22 @@
+2025-07-09 09:33:10.516 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 24秒
+2025-07-09 09:33:46.887 [http-nio-16731-exec-8] INFO  other - 用户id: test1 点赞-帖子id: 1
+2025-07-09 09:34:01.871 [http-nio-16731-exec-3] INFO  other - 用户id: test1 取消点赞-帖子id: 1
+2025-07-09 09:36:09.651 [http-nio-16731-exec-10] INFO  other - 用户id: test1 取消收藏-帖子id: 1
+2025-07-09 09:36:39.732 [http-nio-16731-exec-3] INFO  other - 用户id: test1 收藏-帖子id: 2
+2025-07-09 09:36:45.669 [http-nio-16731-exec-2] INFO  other - 用户id: test1 收藏-帖子id: 1
+2025-07-09 09:38:08.419 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 40秒
+2025-07-09 10:18:27.574 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 4, 浏览时长: 72秒
+2025-07-09 10:22:34.750 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 2, 浏览时长: 20秒
+2025-07-09 10:29:18.829 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 6, 浏览时长: 24秒
+2025-07-09 10:30:30.198 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 5, 浏览时长: 20秒
+2025-07-09 10:38:36.661 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 5, 浏览时长: 60秒
+2025-07-09 10:43:01.192 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 25秒
+2025-07-09 11:01:40.040 [http-nio-16731-exec-10] INFO  other - 用户id: test1 收藏-帖子id: 5
+2025-07-09 11:06:16.916 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 4, 浏览时长: 25秒
+2025-07-09 11:07:12.728 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 20秒
+2025-07-09 11:08:38.167 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 35秒
+2025-07-09 11:10:21.877 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 32秒
+2025-07-09 11:26:14.397 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 21秒
+2025-07-09 12:08:53.663 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 9, 浏览时长: 91秒
+2025-07-09 14:38:56.260 [http-nio-16731-exec-1] INFO  other - 用户id: test1 点赞-帖子id: 1
+2025-07-09 14:43:59.597 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 79秒

@@ -72,3 +72,114 @@
 2025-07-08 10:58:48.461 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
 2025-07-08 10:58:50.959 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
 2025-07-08 10:59:16.541 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:01:27.768 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:01:40.964 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:01:43.360 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:01:45.442 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:01:47.860 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:02:32.603 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:02:46.049 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:02:50.777 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:28.978 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:36.025 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:38.607 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:55.798 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:57.363 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:06:59.499 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:07:29.713 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:07:40.011 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:07:55.091 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:10:44.760 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:11:18.967 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:11:36.868 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:11:44.464 [http-nio-16731-exec-3] INFO  other - 用户id: null 浏览-帖子id: 1
+2025-07-08 11:12:54.047 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:13:26.207 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:13:28.147 [http-nio-16731-exec-3] INFO  other - 用户id: 10000000 浏览-帖子id: 1
+2025-07-08 11:15:45.974 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:23:44.919 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:23:52.022 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:23:54.392 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:24:31.670 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:24:54.085 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:29:43.007 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:29:54.324 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:30:01.920 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:30:46.316 [http-nio-16731-exec-5] INFO  other - 用户id: 10000000 浏览-帖子id: 1
+2025-07-08 11:35:06.997 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:35:35.808 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:35:55.157 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:36:17.551 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:38:20.244 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:38:31.701 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:38:46.018 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:42:46.197 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:55:55.514 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:56:03.766 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 8秒
+2025-07-08 11:56:36.441 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:57:00.229 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 24秒
+2025-07-08 11:57:44.111 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 11:58:05.289 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 21秒
+2025-07-08 14:55:29.242 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 14:55:37.686 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 8秒
+2025-07-08 15:40:42.271 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:41:19.215 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 37秒
+2025-07-08 15:42:31.993 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:42:51.835 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 20秒
+2025-07-08 15:44:04.431 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:44:09.150 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 5秒
+2025-07-08 15:44:11.520 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:48:11.078 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 239秒
+2025-07-08 15:48:14.484 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:48:27.104 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 13秒
+2025-07-08 15:49:09.893 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:49:13.921 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 4秒
+2025-07-08 15:49:23.177 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:49:31.349 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 8秒
+2025-07-08 15:50:44.459 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:51:02.755 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 18秒
+2025-07-08 15:53:28.334 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:53:34.926 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 7秒
+2025-07-08 15:54:26.628 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:54:26.747 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 15:54:33.214 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 6秒
+2025-07-08 15:59:52.746 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:00:02.443 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 10秒
+2025-07-08 16:02:05.523 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:02:09.758 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 4秒
+2025-07-08 16:04:42.916 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:04:53.508 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 11秒
+2025-07-08 16:04:56.371 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:05:02.639 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 6秒
+2025-07-08 16:06:25.785 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:06:41.611 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:06:52.758 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 11秒
+2025-07-08 16:09:39.076 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:09:50.602 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:09:50.608 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 11秒
+2025-07-08 16:10:21.815 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:10:21.827 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 31秒
+2025-07-08 16:11:07.670 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:11:07.672 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 46秒
+2025-07-08 16:11:14.425 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 7秒
+2025-07-08 16:11:26.618 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:11:41.108 [http-nio-16731-exec-5] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 14秒
+2025-07-08 16:16:06.983 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:16:07.134 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:16:16.799 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 10秒
+2025-07-08 16:16:17.618 [http-nio-16731-exec-2] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:16:21.391 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 4秒
+2025-07-08 16:16:34.784 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:16:57.928 [http-nio-16731-exec-10] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:17:08.704 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 11秒
+2025-07-08 16:23:19.959 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:23:44.526 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 24秒
+2025-07-08 16:25:58.873 [http-nio-16731-exec-6] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:26:40.847 [http-nio-16731-exec-7] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 42秒
+2025-07-08 16:26:40.855 [http-nio-16731-exec-8] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:26:54.130 [http-nio-16731-exec-4] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 13秒
+2025-07-08 16:26:55.187 [http-nio-16731-exec-3] INFO  other - 用户id: test1 浏览-帖子id: 1
+2025-07-08 16:27:11.686 [http-nio-16731-exec-1] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 16秒
+2025-07-08 17:07:18.912 [http-nio-16731-exec-9] INFO  other - 用户id: test1 浏览-帖子id: 1, 浏览时长: 50秒
+2025-07-08 17:17:01.701 [http-nio-16731-exec-9] INFO  other - 用户id: test1 点赞-帖子id: 1
+2025-07-08 17:17:07.538 [http-nio-16731-exec-7] INFO  other - 用户id: test1 取消点赞-帖子id: 1

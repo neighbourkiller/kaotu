@@ -8,6 +8,8 @@ import com.kaotu.base.constant.USER;
 import com.kaotu.base.constant.WEIGHT;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
+import com.kaotu.base.model.dto.RecommendationItemDTO;
+import com.kaotu.base.model.dto.RecommendationResponseDTO;
 import com.kaotu.base.model.po.*;
 import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
@@ -21,8 +23,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,11 +169,16 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     @Autowired
     private UserTagMapper userTagMapper;
 
-    //TODO 应获取personal_recommend表的数据并返回
-    @Override
-    public List<BookVO> getPersonalize() {//伪推荐
+    @Autowired
+    private RestTemplate restTemplate;
 
-        log.info("userId: {}", UserContext.getUserId());
+    @Value("${kaotu.recommend.url}")
+    private String baseurl;
+
+    @Override
+    public RecommendationResponseDTO getPersonalize() {//伪推荐
+
+/*        log.info("userId: {}", UserContext.getUserId());
         // 获取当前用户的标签
         List<UserTag> userTags = userTagMapper.selectList(new LambdaQueryWrapper<UserTag>().eq(UserTag::getUserId, UserContext.getUserId()));
 
@@ -187,7 +197,59 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         queryWrapper.orderByDesc(Book::getComments);
         queryWrapper.last("limit 12");
         List<BookVO> personalizedBooks = bookMapper.getBookVOList(queryWrapper);
-        return personalizedBooks;
+        return personalizedBooks;*/
+        String userId = UserContext.getUserId();
+        if (userId == null) {
+            log.warn("用户未登录，无法获取个性化推荐，将返回热门列表。");
+        }
+        String url = baseurl + "?user_id=" + userId;
+        try {
+            // 发送GET请求，并期望返回 RecommendationResponseDTO 类型的对象
+            RecommendationResponseDTO response = restTemplate.getForObject(url, RecommendationResponseDTO.class);
+
+            if (response == null || response.getRecommendations() == null || response.getRecommendations().isEmpty()) {
+                log.warn("从推荐服务未获取到有效数据，返回热门列表。");
+                List<BookVO> hotList = getHotList();
+                RecommendationResponseDTO fallbackResponse = new RecommendationResponseDTO();
+                List<RecommendationItemDTO> items=new ArrayList<>();
+
+/*                items.add((RecommendationItemDTO) hotList.stream()
+                        .map(bookVO -> {
+                                    RecommendationItemDTO item = new RecommendationItemDTO();
+                                    BeanUtils.copyProperties(bookVO, item);
+                                    return item;
+                                }
+                            ));
+                fallbackResponse.setRecommendations(items);
+                return  fallbackResponse;*/
+
+                hotList.forEach(item->{
+                    RecommendationItemDTO recommendationItemDTO = new RecommendationItemDTO();
+                    BeanUtils.copyProperties(item, recommendationItemDTO);
+                    items.add(recommendationItemDTO);
+                });
+                fallbackResponse.setRecommendations(items);
+                return fallbackResponse;
+
+
+            }
+            return response;
+
+        } catch (RestClientException e) {
+            log.error("请求个性化推荐服务失败: {}", e.getMessage());
+            // 服务调用失败时，可以降级返回热门列表
+            List<BookVO> hotList = getHotList();
+            RecommendationResponseDTO fallbackResponse = new RecommendationResponseDTO();
+            List<RecommendationItemDTO> items=new ArrayList<>();
+
+            hotList.forEach(item->{
+                RecommendationItemDTO recommendationItemDTO = new RecommendationItemDTO();
+                BeanUtils.copyProperties(item, recommendationItemDTO);
+                items.add(recommendationItemDTO);
+            });
+            fallbackResponse.setRecommendations(items);
+            return fallbackResponse;
+        }
     }
 
     @Override
@@ -275,43 +337,5 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
             commentVO.setIsUpvoted(0);
             return commentVO;
         }).collect(Collectors.toList());
-    }
-
-
-    //TODO 完善真正的个性化推荐逻辑
-    @Override
-    public List<BookVO> getPersonalize2() {
-// 1. 创建 HttpUrl.Builder 来构建 URL
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://localhost:16735/personalize").newBuilder();
-
-        // 2. 添加您需要的查询参数，这里以 userId 为例
-        urlBuilder.addQueryParameter("userId", UserContext.getUserId());
-        // 您可以链式调用 addQueryParameter 添加更多参数
-        // urlBuilder.addQueryParameter("limit", "12");
-
-        // 3. 构建最终的 URL
-        String url = urlBuilder.build().toString();
-        log.info("请求个性化推荐 URL: {}", url);
-
-        // 4. 创建 Request 对象
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        // 5. 发送请求并处理响应 (此处需要您根据实际返回的JSON格式进行解析)
-        // try (Response response = okHttpClient.newCall(request).execute()) {
-        //     if (response.isSuccessful() && response.body() != null) {
-        //         String responseBody = response.body().string();
-        //         // 使用 Jackson 或 Gson 将 responseBody 解析为 List<BookVO>
-        //         // ObjectMapper objectMapper = new ObjectMapper();
-        //         // return objectMapper.readValue(responseBody, new TypeReference<List<BookVO>>(){});
-        //     }
-        // } catch (IOException e) {
-        //     log.error("请求个性化推荐失败", e);
-        //     throw new BaseException("获取个性化推荐失败");
-        // }
-
-        return null; // 暂时返回 null，您需要实现响应处理逻辑
     }
 }

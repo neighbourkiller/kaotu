@@ -3,6 +3,8 @@ package com.kaotu.base.handler; // 您可以放在任何能被Spring扫描到的
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "createDate", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject, "lastLogin", LocalDateTime.class, LocalDateTime.now());
         this.strictInsertFill(metaObject,"favoriteTime", LocalDateTime.class, LocalDateTime.now());
+        this.strictInsertFill(metaObject,"calculationDate", LocalDate.class, LocalDate.now());
     }
 
     /**

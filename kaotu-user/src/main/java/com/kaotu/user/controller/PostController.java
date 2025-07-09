@@ -4,8 +4,10 @@ import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
+import com.kaotu.base.model.vo.PostCommentVO;
 import com.kaotu.base.model.vo.PostTagVO;
 import com.kaotu.base.model.vo.PostVO;
+import com.kaotu.base.model.vo.ViewHistory;
 import com.kaotu.base.result.Result;
 import com.kaotu.base.utils.LogUtils;
 import com.kaotu.user.service.CommunityPostService;
@@ -54,7 +56,7 @@ public class PostController {
         try {
             PostVO postDetail = postService.getPostDetail(postId);
             // 记录用户浏览帖子日志
-            LogUtils.other("用户id: {} 浏览-帖子id: {}", UserContext.getUserId(), postId);
+//            LogUtils.other("用户id: {} 浏览-帖子id: {}", UserContext.getUserId(), postId);
             return Result.success(postDetail);
         } catch (BaseException e) {
             log.error("获取帖子详情失败: {}", e.getMessage());
@@ -114,14 +116,14 @@ public class PostController {
         }
     }
 
-    //TODO: 需要完善接口
-    @GetMapping("/recommend")
-    @Operation(summary = "获取推荐帖子")
-    public Result<List<PostVO>> getRecommendedPosts() {
-        log.info("获取推荐帖子");
+
+    @GetMapping("/new")
+    @Operation(summary = "获取最新帖子")
+    public Result<List<PostVO>> getNewestPosts() {
+        log.info("获取最新帖子");
         try {
-            List<PostVO> recommendedPosts = postService.getRecommendedPosts();
-            return Result.success(recommendedPosts);
+            List<PostVO> newestPosts = postService.getNewestPosts();
+            return Result.success(newestPosts);
         } catch (BaseException e) {
             log.error("获取推荐帖子失败: {}", e.getMessage());
             return Result.error("获取推荐帖子失败: " + e.getMessage());
@@ -165,6 +167,73 @@ public class PostController {
         } catch (Exception e) {
             log.error("记录浏览日志失败: {}", e.getMessage());
             return Result.error("记录浏览日志失败: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/comments")
+    @Operation(summary = "获取帖子评论", description = "根据帖子ID获取评论列表")
+    public Result<List<PostCommentVO>> getCommentsByPostId(@RequestParam("postId") Long postId) {
+        log.info("获取帖子评论: postId={}", postId);
+        try {
+            List<PostCommentVO> comments = postService.getCommentsByPostId(postId);
+            return Result.success(comments);
+        } catch (BaseException e) {
+            log.error("获取帖子评论失败: {}", e.getMessage());
+            return Result.error("获取帖子评论失败: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/browseHistory")
+    @Operation(summary = "获取用户浏览历史", description = "获取用户浏览的帖子历史记录")
+    public Result<List<ViewHistory>> getViewHistory() {
+        log.info("获取用户浏览历史");
+        try {
+            List<ViewHistory> history = postService.getViewHistory();
+            return Result.success(history);
+        } catch (BaseException e) {
+            log.error("获取浏览历史失败: {}", e.getMessage());
+            return Result.error("获取浏览历史失败: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "搜索帖子", description = "根据关键词搜索帖子")
+    public Result<List<PostVO>> searchPosts(@RequestParam("param") String keyword) {
+        log.info("搜索帖子: keyword={}", keyword);
+        try {
+            List<PostVO> posts = postService.searchPosts(keyword);
+            return Result.success(posts);
+        } catch (BaseException e) {
+            log.error("搜索帖子失败: {}", e.getMessage());
+            return Result.error("搜索帖子失败: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/hotPosts")
+    @Operation(summary = "获取热门帖子", description = "获取按浏览量排序的热门帖子")
+    public Result<List<PostVO>> getHotPosts() {
+        log.info("获取热门帖子");
+        try {
+            List<PostVO> hotPosts = postService.getHotPosts();
+            return Result.success(hotPosts);
+        } catch (BaseException e) {
+            log.error("获取热门帖子失败: {}", e.getMessage());
+            return Result.error("获取热门帖子失败: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/hotTags")
+    @Operation(summary = "获取热门标签", description = "获取按使用频率排序的热门标签")
+    public Result<List<Integer>> getHotTags() {
+        log.info("获取热门标签");
+        try {
+            List<Integer> hotTags = postService.getHotTags();
+            return Result.success(hotTags);
+        } catch (BaseException e) {
+            log.error("获取热门标签失败: {}", e.getMessage());
+            return Result.error("获取热门标签失败: " + e.getMessage());
         }
     }
 

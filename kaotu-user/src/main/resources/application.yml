@@ -15,5 +15,9 @@ kaotu:
   jwt:
     secret-key: itkaotu
     ttl: 172800000 # 2 days in milliseconds
+  log:
+    directory: logs
+  recommend:
+    url: http://10.242.1.62:5000/recommend
 logging:
   config: classpath:logback.xml

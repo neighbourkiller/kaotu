@@ -6,12 +6,15 @@ import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
 import com.kaotu.base.model.po.*;
+import com.kaotu.base.model.vo.PostCommentVO;
 import com.kaotu.base.model.vo.PostTagVO;
 import com.kaotu.base.model.vo.PostVO;
+import com.kaotu.base.model.vo.ViewHistory;
 import com.kaotu.base.utils.LogUtils;
 import com.kaotu.user.mapper.*;
 import com.kaotu.user.service.CommunityPostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.user.util.PostPopularityAnalyzer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -108,25 +112,21 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         User author = userMapper.getByUserId(post.getUserId());
         postVO.setUsername(author.getUsername());
         if (UserContext.getUserId() == null) {
+            log.info("获取帖子详情时用户未登录，postId: {}", postId);
             postVO.setIsLiked(false);
             postVO.setIsCollected(false);
             return postVO;
         }
 
         // 用户是否点赞
-        if (likeMapper.selectCount(new LambdaQueryWrapper<UserPostLike>()
+        postVO.setIsLiked(likeMapper.selectCount(new LambdaQueryWrapper<UserPostLike>()
                 .eq(UserPostLike::getTargetId, postId)
                 .eq(UserPostLike::getTargetType, false)
-                .eq(UserPostLike::getUserId, UserContext.getUserId())) > 0)
-            postVO.setIsLiked(true);
-        else postVO.setIsLiked(false);
+                .eq(UserPostLike::getUserId, UserContext.getUserId())) > 0);
         // 用户是否收藏
-        if (collectionMapper.selectCount(new LambdaQueryWrapper<UserPostCollection>()
+        postVO.setIsCollected(collectionMapper.selectCount(new LambdaQueryWrapper<UserPostCollection>()
                 .eq(UserPostCollection::getPostId, postId)
-                .eq(UserPostCollection::getUserId, UserContext.getUserId())) > 0)
-            postVO.setIsCollected(true);
-        else postVO.setIsCollected(false);
-
+                .eq(UserPostCollection::getUserId, UserContext.getUserId())) > 0);
         return postVO;
     }
 
@@ -229,14 +229,14 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
                 .stream()
                 .map(UserPostCollection::getPostId).collect(Collectors.toList());
         List<PostVO> postVOs=new ArrayList<>();
-        String username= userMapper.getByUserId(UserContext.getUserId()).getUsername();
+//        String username= userMapper.getByUserId(UserContext.getUserId()).getUsername();
         if (!postIds.isEmpty()) {
             for(Long postId:postIds){
                 CommunityPost post = postMapper.selectById(postId);
                 PostVO postVO=new PostVO();
                 BeanUtils.copyProperties(post,postVO);
                 postVO.setTagIds(postTagMapper.getTagIdsByPostId(postId));
-                postVO.setUsername(username);
+                postVO.setUsername(userMapper.getByUserId(post.getUserId()).getUsername());
                 postVO.setIsCollected(true);
                 postVOs.add(postVO);
             }
@@ -272,20 +272,86 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         }
     }
 
-    //TODO: 推荐帖子逻辑
     @Override
-    public List<PostVO> getRecommendedPosts() {
-        // 获取十个最新的帖子
-        List<CommunityPost> posts = postMapper.selectList(new LambdaQueryWrapper<CommunityPost>()
-                .eq(CommunityPost::getStatus, true)
-                .orderByDesc(CommunityPost::getCreateTime)
-                .last("LIMIT 10"));
+    public List<PostVO> getNewestPosts() {
+        String currentUserId = UserContext.getUserId();
+        List<CommunityPost> finalPosts = new ArrayList<>();
 
+        if (currentUserId == null) {
+            // 用户未登录，直接获取最新的10个帖子
+            finalPosts = postMapper.selectList(new LambdaQueryWrapper<CommunityPost>()
+                    .eq(CommunityPost::getStatus, true)
+                    .orderByDesc(CommunityPost::getCreateTime)
+                    .last("LIMIT 10"));
+        } else {
+            // 用户已登录，需要排除已浏览的帖子
+            // 1. 获取用户浏览过的帖子ID列表
+            List<Long> viewedPostIds = historyMapper.selectList(new LambdaQueryWrapper<PostViewHistory>()
+                            .eq(PostViewHistory::getUserId, currentUserId))
+                    .stream()
+                    .map(PostViewHistory::getPostId)
+                    .collect(Collectors.toList());
 
+            // 2. 获取用户未浏览过的最新帖子
+            List<CommunityPost> unseenPosts;
+            LambdaQueryWrapper<CommunityPost> unseenQuery = new LambdaQueryWrapper<CommunityPost>()
+                    .eq(CommunityPost::getStatus, true)
+                    .orderByDesc(CommunityPost::getCreateTime)
+                    .last("LIMIT 10");
 
+            if (!viewedPostIds.isEmpty()) {
+                unseenQuery.notIn(CommunityPost::getId, viewedPostIds);
+            }
+            unseenPosts = postMapper.selectList(unseenQuery);
+            finalPosts.addAll(unseenPosts);
 
+            // 3. 如果未浏览的帖子不足10个，用已浏览的帖子补充
+            int needed = 10 - finalPosts.size();
+            if (needed > 0 && !viewedPostIds.isEmpty()) {
+                List<CommunityPost> seenPosts = postMapper.selectList(new LambdaQueryWrapper<CommunityPost>()
+                        .eq(CommunityPost::getStatus, true)
+                        .in(CommunityPost::getId, viewedPostIds)
+                        .orderByDesc(CommunityPost::getCreateTime) // 按最新浏览排序也可以，这里按创建时间
+                        .last("LIMIT " + needed));
+                finalPosts.addAll(seenPosts);
+            }
+        }
 
-        return Collections.emptyList();
+        if (finalPosts.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 4. 将CommunityPost列表转换为PostVO列表，并填充额外信息
+        return finalPosts.stream().map(post -> {
+            PostVO postVO = new PostVO();
+            BeanUtils.copyProperties(post, postVO);
+
+            // 填充作者信息
+            User author = userMapper.getByUserId(post.getUserId());
+            if (author != null) {
+                postVO.setUsername(author.getUsername());
+            }
+
+            // 填充标签信息
+            postVO.setTagIds(postTagMapper.getTagIdsByPostId(post.getId()));
+
+            // 如果用户登录，填充点赞和收藏状态
+            if (currentUserId != null) {
+                postVO.setIsLiked(likeMapper.selectCount(new LambdaQueryWrapper<UserPostLike>()
+                        .eq(UserPostLike::getUserId, currentUserId)
+                        .eq(UserPostLike::getTargetType, false) // 帖子类型
+                        .eq(UserPostLike::getTargetId, post.getId())) > 0);
+
+                postVO.setIsCollected(collectionMapper.selectCount(new LambdaQueryWrapper<UserPostCollection>()
+                        .eq(UserPostCollection::getUserId, currentUserId)
+                        .eq(UserPostCollection::getPostId, post.getId())) > 0);
+            } else {
+                postVO.setIsLiked(false);
+                postVO.setIsCollected(false);
+            }
+
+            return postVO;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -303,9 +369,7 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
             throw new BaseException("删除失败");
         }
         // 更新评论状态
-        if(commentMapper.updateCommentStatus(postId, false)== 0) {
-            throw new BaseException("删除失败");
-        }
+        commentMapper.updateCommentStatus(postId, false);
     }
 
     @Override
@@ -370,7 +434,8 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
             throw new BaseException("无效的帖子ID或浏览时间");
         }
         // 记录浏览日志
-        LogUtils.other("用户id: {} 浏览-帖子id: {}, 浏览时长: {}秒", UserContext.getUserId(), postId, time);
+        if(time>=20)
+            LogUtils.other("用户id: {} 浏览-帖子id: {}, 浏览时长: {}秒", UserContext.getUserId(), postId, time);
         // 检查是否已经记录过浏览历史
         PostViewHistory history = historyMapper.selectOne(new LambdaQueryWrapper<PostViewHistory>()
                 .eq(PostViewHistory::getPostId, postId)
@@ -391,5 +456,189 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
                 throw new BaseException("记录浏览历史失败，请稍后再试");
             }
         }
+        // 更新帖子浏览数
+        if (postMapper.updateViewCount(postId, 1) == 0) {
+            throw new BaseException("帖子浏览数更新失败，请稍后再试");
+        }
     }
+
+
+
+    @Override
+    public List<PostCommentVO> getCommentsByPostId(Long postId) {
+        // 1. 查询出指定帖子下所有状态为正常的评论
+        LambdaQueryWrapper<PostComment> queryWrapper = new LambdaQueryWrapper<PostComment>()
+                .eq(PostComment::getPostId, postId)
+                .eq(PostComment::getStatus, true)
+                .orderByAsc(PostComment::getCreateTime); // 按时间升序
+        List<PostComment> allComments = commentMapper.selectList(queryWrapper);
+
+        if (allComments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2. 如果用户已登录，查询这些评论中哪些被用户点赞了
+        String currentUserId = UserContext.getUserId();
+        // 使用Set以O(1)的复杂度检查是否点赞
+        final java.util.Set<Long> likedCommentIds = new java.util.HashSet<>();
+        if (currentUserId != null) {
+            List<Long> commentIds = allComments.stream().map(PostComment::getId).collect(Collectors.toList());
+            if (!commentIds.isEmpty()) {
+                List<UserPostLike> likes = likeMapper.selectList(new LambdaQueryWrapper<UserPostLike>()
+                        .eq(UserPostLike::getUserId, currentUserId)
+                        .eq(UserPostLike::getTargetType, true) // true表示评论
+                        .in(UserPostLike::getTargetId, commentIds));
+                // 将点赞过的评论ID存入Set
+                likes.forEach(like -> likedCommentIds.add(like.getTargetId()));
+            }
+        }
+
+        // 3. 将所有评论转换为VO，并设置isLiked状态
+        List<PostCommentVO> allCommentVOs = allComments.stream().map(comment -> {
+            PostCommentVO vo = new PostCommentVO();
+            BeanUtils.copyProperties(comment, vo);
+            // 查询并设置用户信息
+            User user = userMapper.getByUserId(comment.getUserId());
+            if (user != null) {
+                vo.setUsername(user.getUsername());
+            }
+            // 根据查询结果设置isLiked状态
+            vo.setIsLiked(likedCommentIds.contains(comment.getId()));
+            return vo;
+        }).collect(Collectors.toList());
+
+        // 4. 构建树形结构
+        Map<Long, PostCommentVO> commentMap = allCommentVOs.stream()
+                .collect(Collectors.toMap(PostCommentVO::getId, vo -> vo));
+
+        List<PostCommentVO> rootComments = new ArrayList<>();
+        for (PostCommentVO vo : allCommentVOs) {
+            Long parentId = vo.getParentId();
+            if (parentId != null && commentMap.containsKey(parentId)) {
+                PostCommentVO parentVO = commentMap.get(parentId);
+                if (parentVO.getChildren() == null) {
+                    parentVO.setChildren(new ArrayList<>());
+                }
+                parentVO.getChildren().add(vo);
+            } else {
+                rootComments.add(vo);
+            }
+        }
+
+        return rootComments;
+    }
+
+    @Override
+    public List<ViewHistory> getViewHistory() {
+        List<PostViewHistory> list = historyMapper.selectList(new LambdaQueryWrapper<PostViewHistory>()
+                .eq(PostViewHistory::getUserId, UserContext.getUserId()));
+        if (list != null && !list.isEmpty()) {
+            return list.stream().map(history -> {
+                ViewHistory viewHistory = new ViewHistory();
+                BeanUtils.copyProperties(history, viewHistory);
+                // 设置帖子标题
+                CommunityPost post = postMapper.selectById(history.getPostId());
+                if (post != null) {
+                    viewHistory.setTitle(post.getTitle());
+                    viewHistory.setContent(post.getContent());
+                    viewHistory.setUserId(post.getUserId());// 发帖人ID
+                    viewHistory.setUsername(userMapper.getByUserId(post.getUserId()).getUsername()); // 发帖人用户名
+                }
+                return viewHistory;
+            }).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<PostVO> searchPosts(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 1. 查找用户名匹配关键字的用户ID
+        List<String> userIds = userMapper.selectList(new LambdaQueryWrapper<User>()
+                        .like(User::getUsername, keyword))
+                .stream()
+                .map(User::getUserId)
+                .collect(Collectors.toList());
+
+        // 2. 构建帖子查询条件
+        LambdaQueryWrapper<CommunityPost> queryWrapper = new LambdaQueryWrapper<CommunityPost>()
+                .eq(CommunityPost::getStatus, true);
+
+        // 组合查询：(标题 like keyword) OR (内容 like keyword) OR (用户ID in [...])
+        queryWrapper.and(wrapper -> {
+            wrapper.like(CommunityPost::getTitle, keyword)
+                    .or()
+                    .like(CommunityPost::getContent, keyword);
+            if (!userIds.isEmpty()) {
+                wrapper.or().in(CommunityPost::getUserId, userIds);
+            }
+        });
+
+        queryWrapper.orderByDesc(CommunityPost::getCreateTime);
+
+        List<CommunityPost> posts = postMapper.selectList(queryWrapper);
+
+        if (posts.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 3. 转换为PostVO
+        return posts.stream().map(post -> {
+            PostVO postVO = new PostVO();
+            BeanUtils.copyProperties(post, postVO);
+            postVO.setTagIds(postTagMapper.getTagIdsByPostId(post.getId()));
+            User author = userMapper.getByUserId(post.getUserId());
+            if (author != null) {
+                postVO.setUsername(author.getUsername());
+            }
+            return postVO;
+        }).collect(Collectors.toList());
+    }
+
+    @Autowired
+    private PostPopularityAnalyzer analyzer;
+
+    @Override
+    public List<PostVO> getHotPosts() {
+        List<Long> posts = analyzer.getHotPosts();
+        List<PostVO> hotPosts = new ArrayList<>();
+        for(Long postId:posts){
+            CommunityPost post = postMapper.selectById(postId);
+            if(post==null || !post.getStatus()){
+                continue;
+            }
+            PostVO postVO=new PostVO();
+            BeanUtils.copyProperties(post,postVO);
+            postVO.setTagIds(postTagMapper.getTagIdsByPostId(postId));
+            postVO.setUsername(userMapper.getByUserId(post.getUserId()).getUsername());
+            hotPosts.add(postVO);
+        }
+
+        return hotPosts;
+    }
+
+    @Override
+    public List<Integer> getHotTags() {
+        // 获取热门帖子的标签
+        List<Long> postIds = analyzer.getHotPosts();
+        List<Integer> hotTags = new ArrayList<>();
+        for(Long postId : postIds) {
+            List<Integer> tagIds = postTagMapper.getTagIdsByPostId(postId);
+            if (tagIds != null && !tagIds.isEmpty()) {
+                hotTags.addAll(tagIds);
+            }
+        }
+        if(hotTags.size()>6){
+            // 如果超过6个，取前6个
+            hotTags = hotTags.stream().distinct().limit(6).collect(Collectors.toList());
+        } else {
+            // 去重
+            hotTags = hotTags.stream().distinct().collect(Collectors.toList());
+        }
+        return hotTags;
+    }
+
 }
