@@ -1,5 +1,0 @@
-server:
-  port: 16740
-spring:
-  application:
-    name: kaotu-demo
