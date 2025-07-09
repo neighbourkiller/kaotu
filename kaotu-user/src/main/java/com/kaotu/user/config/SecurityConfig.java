@@ -25,7 +25,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/user/user/login", "/user/user/register","/user/book/**","/user/user/personalize").permitAll()
                 .antMatchers("/user/post/tags","/user/post/detail","/user/post/recommend","/user/post/comments",
-                        "/user/post/search","/user/post/hotTags","/user/post/hotPosts","/user/post/new").permitAll()
+                        "/user/post/search","/user/post/hotTags","/user/post/hotPosts","/user/post/new",
+                        "/webjars/**","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated() // 其他请求需要认证
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class); // 添加 JWT 过滤器

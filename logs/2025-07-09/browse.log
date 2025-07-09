@@ -3,3 +3,5 @@
 2025-07-09 10:00:37.175 [http-nio-16731-exec-3] INFO  browse - 用户ID: test1, 书籍ID: 1, 停留时间: 86秒
 2025-07-09 10:03:04.514 [http-nio-16731-exec-2] INFO  browse - 用户ID: test1, 书籍ID: 1, 停留时间: 66秒
 2025-07-09 10:06:29.158 [http-nio-16731-exec-6] INFO  browse - 用户ID: test1, 书籍ID: 41, 停留时间: 37秒
+2025-07-09 16:59:04.762 [http-nio-16731-exec-6] INFO  browse - 用户ID: 10000001, 书籍ID: 44, 停留时间: 8秒
+2025-07-09 20:12:58.448 [http-nio-16731-exec-2] INFO  browse - 用户ID: test1, 书籍ID: 84, 停留时间: 36秒

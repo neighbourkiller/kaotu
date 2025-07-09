@@ -3,6 +3,7 @@ package com.kaotu.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.constant.MessageType;
 import com.kaotu.base.constant.Status;
 import com.kaotu.base.constant.USER;
 import com.kaotu.base.constant.WEIGHT;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -137,6 +139,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         return categories;
     }
 
+    @Autowired
+    private SystemMessageMapper messageMapper;
+
     @Override
     @Transactional
     public void addTags(List<Integer> tags) {
@@ -155,6 +160,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
             userTag.setWeight(WEIGHT.TAG_WEIGHT); // 默认权重为NORMAL
             userTagMapper.insert(userTag);
         }
+
+        messageMapper.insertSystemMessage(UserContext.getUserId(),"标签更新成功", "您已成功更新您的标签。",
+                String.valueOf(MessageType.OPERATION_SUCCESS),false, LocalDateTime.now());
     }
 
     @Override

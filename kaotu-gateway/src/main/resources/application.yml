@@ -6,10 +6,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: system-service
-          uri: http://localhost:16732
-          predicates:
-            - Path=/system/**
         - id: user-service
           uri: http://localhost:16731
           predicates:

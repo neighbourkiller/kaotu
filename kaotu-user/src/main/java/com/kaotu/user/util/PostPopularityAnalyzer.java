@@ -57,7 +57,7 @@ public class PostPopularityAnalyzer {
     private final int topPostsCount = 5; // 默认返回前5个热门帖子
     private final int recentDays = 3;    // 只分析最近3天的日志
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
         calculateDailyPopularPosts();
     }

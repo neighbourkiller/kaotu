@@ -2,6 +2,7 @@ package com.kaotu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kaotu.base.constant.MessageType;
 import com.kaotu.base.constant.Status;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
@@ -144,6 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private static final Logger logger = LoggerFactory.getLogger("browse");
 
     @Override
+    @Transactional
     public void modifyUsername(String userId, String username) {
         User user = userMapper.selectById(userId);
         if (user == null) {
@@ -159,6 +161,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (update == 0) {
             throw new BaseException("系统错误，修改用户名失败");
         }
+
+        messageMapper.insertSystemMessage(userId, "用户名修改成功", "您的用户名已被修改为: " + username,
+                String.valueOf(MessageType.OPERATION_SUCCESS), false, LocalDateTime.now());
     }
 
     @Override
