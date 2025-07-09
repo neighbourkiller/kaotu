@@ -1,5 +1,0 @@
-server:
-  port: 16732
-spring:
-  application:
-    name: system-service

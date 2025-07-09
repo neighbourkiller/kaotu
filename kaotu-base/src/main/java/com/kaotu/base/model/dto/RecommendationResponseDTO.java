@@ -9,7 +9,7 @@ import java.util.List;
 public class RecommendationResponseDTO {
 
     @JsonProperty("user_id")
-    private Integer userId;
+    private String userId;
 
     private List<RecommendationItemDTO> recommendations;
 }

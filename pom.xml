@@ -12,7 +12,6 @@
         <module>kaotu-gateway</module>
         <module>kaotu-user</module>
         <module>kaotu-base</module>
-        <module>kaotu-system</module>
         <module>kaotu-generator</module>
         <module>kaotu-parent</module>
         <module>kaotu-admin</module>
