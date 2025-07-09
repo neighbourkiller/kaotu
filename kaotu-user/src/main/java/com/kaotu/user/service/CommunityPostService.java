@@ -2,6 +2,7 @@ package com.kaotu.user.service;
 
 import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
+import com.kaotu.base.model.dto.PostUpdateDto;
 import com.kaotu.base.model.po.CommunityPost;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kaotu.base.model.vo.PostCommentVO;
@@ -79,4 +80,8 @@ public interface CommunityPostService extends IService<CommunityPost> {
     List<PostVO> getHotPosts();
 
     List<Integer> getHotTags();
+
+    List<PostVO> getMyPosts();
+
+    void modifyPost(PostUpdateDto postUpdateDto);
 }

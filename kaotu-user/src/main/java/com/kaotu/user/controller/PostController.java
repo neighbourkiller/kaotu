@@ -4,6 +4,7 @@ import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
+import com.kaotu.base.model.dto.PostUpdateDto;
 import com.kaotu.base.model.vo.PostCommentVO;
 import com.kaotu.base.model.vo.PostTagVO;
 import com.kaotu.base.model.vo.PostVO;
@@ -237,4 +238,29 @@ public class PostController {
         }
     }
 
+    @GetMapping("/myPost")
+    @Operation(summary = "获取用户的帖子", description = "获取当前用户发布的帖子列表")
+    public Result<List<PostVO>> getMyPosts() {
+        log.info("获取用户的帖子");
+        try {
+            List<PostVO> myPosts = postService.getMyPosts();
+            return Result.success(myPosts);
+        } catch (BaseException e) {
+            log.error("获取用户的帖子失败: {}", e.getMessage());
+            return Result.error("获取用户的帖子失败: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/modify")
+    @Operation(summary = "修改帖子", description = "修改当前用户发布的帖子")
+    public Result modifyPost(@RequestBody PostUpdateDto postUpdateDto) {
+        log.info("修改帖子: {}", postUpdateDto);
+        try {
+            postService.modifyPost(postUpdateDto);
+            return Result.success("帖子修改成功");
+        } catch (BaseException e) {
+            log.error("修改帖子失败: {}", e.getMessage());
+            return Result.error("修改帖子失败: " + e.getMessage());
+        }
+    }
 }

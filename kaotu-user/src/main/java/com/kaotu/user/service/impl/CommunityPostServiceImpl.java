@@ -5,6 +5,7 @@ import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PostCommentDto;
 import com.kaotu.base.model.dto.PostDto;
+import com.kaotu.base.model.dto.PostUpdateDto;
 import com.kaotu.base.model.po.*;
 import com.kaotu.base.model.vo.PostCommentVO;
 import com.kaotu.base.model.vo.PostTagVO;
@@ -641,4 +642,61 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         return hotTags;
     }
 
+    @Override
+    public List<PostVO> getMyPosts() {
+        List<CommunityPost> posts = postMapper.selectList(new LambdaQueryWrapper<CommunityPost>()
+                .eq(CommunityPost::getUserId, UserContext.getUserId())
+                .eq(CommunityPost::getStatus, true)
+                .orderByDesc(CommunityPost::getCreateTime));
+        List<PostVO> myPosts = new ArrayList<>();
+        String username = userMapper.getByUserId(UserContext.getUserId()).getUsername();
+        posts.forEach(post -> {
+            PostVO postVO = new PostVO();
+            BeanUtils.copyProperties(post, postVO);
+            postVO.setTagIds(postTagMapper.getTagIdsByPostId(post.getId()));
+            postVO.setUsername(username);
+            postVO.setIsLiked(likeMapper.selectCount(new LambdaQueryWrapper<UserPostLike>()
+                    .eq(UserPostLike::getTargetId, post.getId())
+                    .eq(UserPostLike::getTargetType, false)
+                    .eq(UserPostLike::getUserId, UserContext.getUserId())) > 0);
+            postVO.setIsCollected(collectionMapper.selectCount(new LambdaQueryWrapper<UserPostCollection>()
+                    .eq(UserPostCollection::getPostId, post.getId())
+                    .eq(UserPostCollection::getUserId, UserContext.getUserId())) > 0);
+            myPosts.add(postVO);
+        });
+        return myPosts;
+    }
+
+    @Override
+    @Transactional
+    public void modifyPost(PostUpdateDto postUpdateDto) {
+        CommunityPost post = postMapper.selectById(postUpdateDto.getPostId());
+        if(!post.getUserId().equals(UserContext.getUserId())){
+            throw new BaseException("修改失败，您无权修改此帖子");
+        }
+        if(postUpdateDto.getTitle()!=null)
+            post.setTitle(postUpdateDto.getTitle());
+        if(postUpdateDto.getContent()!=null)
+            post.setContent(postUpdateDto.getContent());
+        post.setUpdateTime(postUpdateDto.getUpdateTime() != null ? postUpdateDto.getUpdateTime() : LocalDateTime.now());
+        if(postUpdateDto.getBookId()!=null)
+            post.setBookId(postUpdateDto.getBookId());
+        postMapper.updateById(post);
+        // 处理标签更新逻辑
+        if (postUpdateDto.getTags() != null && !postUpdateDto.getTags().isEmpty()) {
+            // 先删除旧的标签关联
+            postTagMapper.delete(new LambdaQueryWrapper<PostTag>().eq(PostTag::getPostId, postUpdateDto.getPostId()));
+            // 再添加新的标签关联
+            postUpdateDto.getTags().forEach(tagId -> {
+                if (tagId != null) {
+                    PostTag postTag = new PostTag();
+                    postTag.setPostId(postUpdateDto.getPostId());
+                    postTag.setTagId(tagId);
+                    if (postTagMapper.insert(postTag) == 0) {
+                        throw new BaseException("帖子标签更新失败，请稍后再试");
+                    }
+                }
+            });
+        }
+    }
 }
