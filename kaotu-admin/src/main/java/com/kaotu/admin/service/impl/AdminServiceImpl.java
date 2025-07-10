@@ -121,9 +121,9 @@ public class AdminServiceImpl implements AdminService {
             int messageRows = adminMapper.insertSystemMessage(user.getUserId(), "账号封禁通知", "您的账号已被管理员封禁，评论等功能暂时被禁用。解封时间为: " + userUpdateDto.getUnblockTime(),
                     String.valueOf(MessageType.ACCOUNT_SUSPENSION), LocalDateTime.now());
             if (messageRows == 0) {
-                log.error("发送解封通知失败，用户ID: {}", user.getUserId());
+                log.error("发送封禁通知失败，用户ID: {}", user.getUserId());
             }
-            log.info("发送解封通知成功，用户ID: {}", user.getUserId());
+            log.info("发送封禁通知成功，用户ID: {}", user.getUserId());
         }
     }
 

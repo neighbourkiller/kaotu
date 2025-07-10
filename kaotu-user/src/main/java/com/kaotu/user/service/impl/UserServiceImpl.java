@@ -43,6 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private JwtProperties jwtProperties;
 
     @Override
+    @Transactional
     public String register(User user) {
         User selected = userMapper.selectById(user.getUserId());
         if (selected != null)
@@ -63,7 +64,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BaseException("系统错误");
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getUserId());
+
+        messageMapper.insertSystemMessage(user.getUserId(), "注册成功", "欢迎使用考图，您的账号已注册成功！", String.valueOf(MessageType.OPERATION_SUCCESS), false, LocalDateTime.now());
         return JwtUtil.createJWT(jwtProperties.getSecretKey(), jwtProperties.getTtl(), claims);
+
     }
 
     /**
@@ -194,8 +198,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (insert == 0) {
                 throw new BaseException("记录浏览时间失败，系统错误");
             }
-        }
-        else {
+        } else {
             // 如果已经有浏览记录，则更新停留时间
             history.setDuration(history.getDuration() + timeInSeconds);
             int update = historyMapper.updateById(history);
@@ -224,6 +227,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         if (commentDto.getContent() == null) {
             throw new BaseException("评论内容不能为空");
+        }
+        LocalDateTime ub = userMapper.getByUserId(UserContext.getUserId()).getUnblockTime();
+        if (ub != null && ub.isAfter(LocalDateTime.now())) {
+            throw new BaseException("账号已被封禁，无法评论");
         }
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentDto, comment);
@@ -317,7 +324,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<SystemMessage> getSystemMessages(String userId) {
-        if(userId==null)
+        if (userId == null)
             return null;
         List<SystemMessage> messages = messageMapper.selectList(new LambdaQueryWrapper<SystemMessage>()
                 .eq(SystemMessage::getReceiverId, userId)
@@ -341,4 +348,51 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
+    @Autowired
+    private FavoriteMapper favoriteMapper;
+    @Autowired
+    private CommunityPostMapper postMapper;
+    @Autowired
+    private PostCommentMapper postCommentMapper;
+    @Autowired
+    private UserTagMapper userTagMapper;
+    @Autowired
+    private UserPostLikeMapper userPostLikeMapper;
+    @Autowired
+    private UserPostCollectionMapper collectionMapper;
+    @Autowired
+    private PostViewHistoryMapper postHistoryMapper;
+
+    /**
+     * 注销用户账号
+     *
+     * @param userId
+     */
+    @Override
+    @Transactional
+    public void writeOff(String userId) {
+        userMapper.deleteById(userId);
+        // 删除用户的评论
+        commentMapper.delete(new LambdaQueryWrapper<Comment>().eq(Comment::getUserId, userId));
+        // 删除用户的浏览记录
+        historyMapper.delete(new LambdaQueryWrapper<BookBrowseHistory>().eq(BookBrowseHistory::getUserId, userId));
+        // 删除用户的点赞记录
+        commentLikeMapper.delete(new LambdaQueryWrapper<CommentLike>().eq(CommentLike::getUserId, userId));
+        // 删除用户的系统消息
+        messageMapper.delete(new LambdaQueryWrapper<SystemMessage>().eq(SystemMessage::getReceiverId, userId));
+        // 删除用户的收藏记录
+        favoriteMapper.delete(new LambdaQueryWrapper<Favorite>().eq(Favorite::getUserId, userId));
+        // 删除用户的社区帖子
+        postMapper.delete(new LambdaQueryWrapper<CommunityPost>().eq(CommunityPost::getUserId, userId));
+        // 删除用户的社区评论
+        postCommentMapper.delete(new LambdaQueryWrapper<PostComment>().eq(PostComment::getUserId, userId));
+        // 删除用户的标签
+        userTagMapper.delete(new LambdaQueryWrapper<UserTag>().eq(UserTag::getUserId, userId));
+        // 删除用户的帖子点赞记录
+        userPostLikeMapper.delete(new LambdaQueryWrapper<UserPostLike>().eq(UserPostLike::getUserId, userId));
+        // 删除用户的帖子收藏记录
+        collectionMapper.delete(new LambdaQueryWrapper<UserPostCollection>().eq(UserPostCollection::getUserId, userId));
+        // 删除用户的帖子浏览记录
+        postHistoryMapper.delete(new LambdaQueryWrapper<PostViewHistory>().eq(PostViewHistory::getUserId, userId));
+    }
 }

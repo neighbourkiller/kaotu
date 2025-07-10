@@ -26,5 +26,6 @@ public interface UserService extends IService<User> {
     void markMessagesAsRead(List<Long> messageIds);
 //    void undoVoteComment(Long commentId);
 
+    void writeOff(String userId);
 
 }

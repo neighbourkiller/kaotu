@@ -209,6 +209,12 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
                 throw new BaseException("帖子收藏数更新失败，请稍后再试");
             }
             LogUtils.other("用户id: {} 收藏-帖子id: {}", UserContext.getUserId(), postId);
+            String authorId = postMapper.selectById(postId).getUserId();
+            // 发送收藏通知给帖子作者
+            messageMapper.insertSystemMessage(authorId,"新增收藏数",
+                    "用户id:  " + UserContext.getUserId() + " 收藏了您的帖子《" +postMapper.selectById(postId).getTitle()+ "》",
+                    String.valueOf(MessageType.POST_COLLECT),false,LocalDateTime.now());
+
         } else {
             // 已经收藏，取消收藏
             if (collectionMapper.delete(new LambdaQueryWrapper<UserPostCollection>()
@@ -449,7 +455,7 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
             throw new BaseException("无效的帖子ID或浏览时间");
         }
         // 记录浏览日志
-        if(time>=20)
+        if(time>=2)
             LogUtils.other("用户id: {} 浏览-帖子id: {}, 浏览时长: {}秒", UserContext.getUserId(), postId, time);
         // 检查是否已经记录过浏览历史
         PostViewHistory history = historyMapper.selectOne(new LambdaQueryWrapper<PostViewHistory>()

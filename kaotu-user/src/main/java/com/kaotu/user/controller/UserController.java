@@ -125,7 +125,7 @@ public class UserController {
     @Operation(summary = "注销用户", description = "注销当前登录用户")
     public Result writeOff(){
         try {
-            userService.removeById(UserContext.getUserId());
+            userService.writeOff(UserContext.getUserId());
             return Result.success();
         }catch (Exception e){
             log.error("Error writing off user: {}", e.getMessage());
