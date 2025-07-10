@@ -12,6 +12,7 @@ import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.model.vo.CommentVO_;
 import com.kaotu.base.properties.JwtProperties;
 import com.kaotu.base.utils.JwtUtil;
+import com.kaotu.base.utils.LogUtils;
 import com.kaotu.base.utils.PasswordUtil;
 import com.kaotu.user.mapper.*;
 import com.kaotu.user.service.UserService;
@@ -166,13 +167,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 String.valueOf(MessageType.OPERATION_SUCCESS), false, LocalDateTime.now());
     }
 
+    @Autowired
+    private BookBrowseHistoryMapper historyMapper;
+
     @Override
+    @Transactional
     public void recordBrowseTime(int bookId, int timeInSeconds) {
         // 记录用户浏览书籍的时间逻辑
         // 这里可以实现具体的业务逻辑，比如将浏览时间存储到数据库中
-        log.info("用户ID: {}, 浏览书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
+//        log.info("用户ID: {}, 浏览书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
 
         logger.info("用户ID: {}, 书籍ID: {}, 停留时间: {}秒", UserContext.getUserId(), bookId, timeInSeconds);
+        // 检查用户是否已经浏览过该书籍
+        LambdaQueryWrapper<BookBrowseHistory> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookBrowseHistory::getUserId, UserContext.getUserId())
+                .eq(BookBrowseHistory::getBookId, bookId);
+        BookBrowseHistory history = historyMapper.selectOne(queryWrapper);
+        if (history == null) {
+            // 如果没有浏览记录，则创建新的记录
+            history = new BookBrowseHistory();
+            history.setUserId(UserContext.getUserId());
+            history.setBookId(bookId);
+            history.setBrowseTime(LocalDateTime.now());
+            history.setDuration(timeInSeconds);
+            int insert = historyMapper.insert(history);
+            if (insert == 0) {
+                throw new BaseException("记录浏览时间失败，系统错误");
+            }
+        }
+        else {
+            // 如果已经有浏览记录，则更新停留时间
+            history.setDuration(history.getDuration() + timeInSeconds);
+            int update = historyMapper.updateById(history);
+            if (update == 0) {
+                throw new BaseException("更新浏览时间失败，系统错误");
+            }
+        }
     }
 
     @Autowired
@@ -200,6 +230,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         comment.setCommentTime(LocalDateTime.now());
         log.info(comment.toString());
         commentMapper.insert(comment);
+
+        LogUtils.browse("用户ID: {}, 评论书籍ID: {}, 评论内容: {}", UserContext.getUserId(), commentDto.getBookId(), commentDto.getContent());
     }
 
     /**
@@ -277,6 +309,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (i == 0) {
             throw new BaseException("点赞失败，系统错误");
         }
+        LogUtils.browse("用户ID: {}, 点赞评论ID: {}", UserContext.getUserId(), commentId);
     }
 
     @Autowired

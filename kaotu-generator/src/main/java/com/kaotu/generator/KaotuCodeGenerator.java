@@ -19,10 +19,10 @@ public class KaotuCodeGenerator {
     //数据库账号
     private static final String DATA_SOURCE_USER_NAME = "root";
     //数据库密码
-    private static final String DATA_SOURCE_PASSWORD = "123456";
+    private static final String DATA_SOURCE_PASSWORD = "mysql";
     //生成的表
     private static final String[] TABLE_NAMES = new String[]{
-            "hot_post"
+            "hot_book"
     };
 
     // TODO 默认生成entity，需要生成DTO修改此变量
@@ -55,7 +55,7 @@ public class KaotuCodeGenerator {
         // 数据库配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDbType(DbType.MYSQL);
-        dsc.setUrl("jdbc:mysql://localhost:3306/kaotu"
+        dsc.setUrl("jdbc:mysql://localhost:16728/kaotu"
                 + "?serverTimezone=UTC&useUnicode=true&useSSL=false&characterEncoding=utf8");
 //		dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");

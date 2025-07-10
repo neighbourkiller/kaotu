@@ -4,9 +4,11 @@ spring:
   application:
     name: admin-service
   datasource:
-    url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://localhost:3306/kaotu?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:16728/kaotu?useSSL=false&serverTimezone=UTC
     username: root
-    password: 123456
+#    password: 123456
+    password: mysql
 kaotu:
   jwt:
     secret-key: itkaotu-admin

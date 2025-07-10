@@ -1,0 +1,15 @@
+2025-07-10 14:50:16.448 [http-nio-16731-exec-8] INFO  browse - 用户ID: Cqu1234, 书籍ID: 201, 停留时间: 15秒
+2025-07-10 14:53:34.138 [http-nio-16731-exec-10] INFO  browse - 用户ID: 10000001, 书籍ID: 84, 停留时间: 7秒
+2025-07-10 15:09:30.508 [http-nio-16731-exec-8] INFO  browse - 用户ID: Cqu1234, 书籍ID: 201, 停留时间: 3秒
+2025-07-10 15:09:37.224 [http-nio-16731-exec-7] INFO  browse - 用户ID: Cqu1234, 书籍ID: 202, 停留时间: 3秒
+2025-07-10 15:10:21.310 [http-nio-16731-exec-7] INFO  browse - 用户ID: Cqu1234, 书籍ID: 3, 停留时间: 4秒
+2025-07-10 15:10:47.840 [http-nio-16731-exec-3] INFO  browse - 用户ID: Cqu1234, 点赞评论ID: 7
+2025-07-10 15:10:49.434 [http-nio-16731-exec-8] INFO  browse - 用户ID: Cqu1234, 点赞评论ID: 3
+2025-07-10 15:10:50.039 [http-nio-16731-exec-4] INFO  browse - 用户ID: Cqu1234, 点赞评论ID: 1
+2025-07-10 15:11:18.221 [http-nio-16731-exec-10] INFO  browse - 用户ID: Cqu1234, 书籍ID: 1, 停留时间: 37秒
+2025-07-10 15:12:17.431 [http-nio-16731-exec-10] INFO  browse - 用户ID: Cqu1234, 评论书籍ID: 201, 评论内容: 1111
+2025-07-10 15:12:22.557 [http-nio-16731-exec-2] INFO  browse - 用户ID: Cqu1234, 书籍ID: 201, 停留时间: 11秒
+2025-07-10 15:12:36.780 [http-nio-16731-exec-2] INFO  browse - 用户ID: Cqu1234, 书籍ID: 1, 停留时间: 12秒
+2025-07-10 15:14:56.453 [http-nio-16731-exec-1] INFO  browse - 用户ID: Cqu1234, 书籍ID: 1, 停留时间: 30秒
+2025-07-10 15:15:48.826 [http-nio-16731-exec-1] INFO  browse - 用户ID: Cqu12345, 点赞评论ID: 8
+2025-07-10 15:15:51.927 [http-nio-16731-exec-6] INFO  browse - 用户ID: Cqu12345, 书籍ID: 201, 停留时间: 7秒

@@ -16,8 +16,10 @@ import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CategoryVO;
 import com.kaotu.base.model.vo.CommentVO;
 import com.kaotu.base.model.vo.CommentVO_;
+import com.kaotu.base.utils.LogUtils;
 import com.kaotu.user.mapper.*;
 import com.kaotu.user.service.BookService;
+import com.kaotu.user.util.BookPopularityAnalyzer;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -118,6 +120,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         if (insert <= 0) {
             throw new BaseException("收藏书籍失败，请稍后再试");
         }
+
+        LogUtils.browse("用户ID: {} 收藏书籍ID: {}", UserContext.getUserId(), bookId);
     }
 
     @Override
@@ -165,13 +169,47 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
                 String.valueOf(MessageType.OPERATION_SUCCESS),false, LocalDateTime.now());
     }
 
+    @Autowired
+    private BookPopularityAnalyzer analyzer;
+
     @Override
     public List<BookVO> getHotList() {
-        LambdaQueryWrapper<Book> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Book::getComments);
-        queryWrapper.last("limit 12");
-        List<BookVO> books = bookMapper.getBookVOList(queryWrapper);
-        return books;
+        final int listSize = 12;
+        List<BookVO> hotBooks = new ArrayList<>();
+
+        // 1. 从BookPopularityAnalyzer获取热门书籍ID
+        List<Integer> hotBookIds = analyzer.getHotBooks();
+
+        if (hotBookIds != null && !hotBookIds.isEmpty()) {
+            // 2. 根据ID列表查询BookVO，并保持原有顺序
+            QueryWrapper<Book> queryWrapper = new QueryWrapper<>();
+            queryWrapper.in("b.id", hotBookIds);
+            List<BookVO> initialHotBooks = bookMapper.getBookVOList2(queryWrapper);
+            // 创建一个Map以便按ID快速查找BookVO
+            java.util.Map<Integer, BookVO> bookMap = initialHotBooks.stream()
+                    .collect(java.util.stream.Collectors.toMap(BookVO::getId, book -> book));
+            // 按照hotBookIds的顺序构建最终列表
+            hotBookIds.forEach(id -> {
+                if (bookMap.containsKey(id)) {
+                    hotBooks.add(bookMap.get(id));
+                }
+            });
+        }
+
+        // 3. 如果热门书籍不足12个，从数据库补充
+        if (hotBooks.size() < listSize) {
+            int needed = listSize - hotBooks.size();
+
+            QueryWrapper<Book> lastWrapper = new QueryWrapper<>();
+            lastWrapper.notIn("b.id", hotBookIds)
+                    .orderByDesc("b.comments")
+                    .last("limit " + needed);
+            List<BookVO> supplementaryBooks = bookMapper.getBookVOList2(lastWrapper);
+            hotBooks.addAll(supplementaryBooks);
+
+        }
+
+        return hotBooks;
     }
 
     @Autowired
@@ -221,16 +259,6 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
                 RecommendationResponseDTO fallbackResponse = new RecommendationResponseDTO();
                 List<RecommendationItemDTO> items=new ArrayList<>();
 
-/*                items.add((RecommendationItemDTO) hotList.stream()
-                        .map(bookVO -> {
-                                    RecommendationItemDTO item = new RecommendationItemDTO();
-                                    BeanUtils.copyProperties(bookVO, item);
-                                    return item;
-                                }
-                            ));
-                fallbackResponse.setRecommendations(items);
-                return  fallbackResponse;*/
-
                 hotList.forEach(item->{
                     RecommendationItemDTO recommendationItemDTO = new RecommendationItemDTO();
                     BeanUtils.copyProperties(item, recommendationItemDTO);
@@ -238,8 +266,6 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
                 });
                 fallbackResponse.setRecommendations(items);
                 return fallbackResponse;
-
-
             }
             return response;
 
