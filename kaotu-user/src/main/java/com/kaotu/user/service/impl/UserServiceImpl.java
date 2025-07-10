@@ -295,25 +295,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return messages;
     }
 
-
-
-/*    @Override
+    @Override
     @Transactional
-    public void undoVoteComment(Long commentId){
-        CommentLike one = commentLikeMapper.selectOne(new LambdaQueryWrapper<CommentLike>()
-                .eq(CommentLike::getUserId, UserContext.getUserId())
-                .eq(CommentLike::getCommentId, commentId));
-        if(one==null)
-            throw new BaseException("未点赞，不能取消点赞");
-        // 删除点赞记录
-        int delete = commentLikeMapper.deleteById(one.getId());
-        if (delete == 0) {
-            throw new BaseException("取消点赞失败，系统错误");
+    public void markMessagesAsRead(List<Long> messageIds) {
+
+        if (messageIds == null || messageIds.isEmpty()) {
+            throw new BaseException("消息ID列表不能为空");
         }
-        int i=commentMapper.updateCommentUps(commentId, -1);
-        if (i == 0) {
-            throw new BaseException("取消点赞失败，系统错误");
+        // 更新消息状态为已读
+        for (Long messageId : messageIds) {
+            messageMapper.updateMessageAsRead(messageId, UserContext.getUserId(), true);
         }
-    }*/
+    }
 
 }

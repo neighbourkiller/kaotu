@@ -12,6 +12,7 @@ import com.kaotu.admin.model.dto.CommentByBookIdDto;
 import com.kaotu.admin.model.dto.CommentStatus;
 import com.kaotu.admin.model.dto.SearchPageDto;
 import com.kaotu.admin.model.dto.UserPageDto;
+import com.kaotu.base.constant.MessageType;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.admin.mapper.AdminMapper;
 import com.kaotu.base.model.dto.PageParams;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,6 +113,17 @@ public class AdminServiceImpl implements AdminService {
         int rows = userMapper.updateById(user);
         if (rows == 0) {
             throw new BaseException("更新用户信息失败");
+        }
+
+
+        if( userUpdateDto.getUnblockTime() != null) {
+            // 发送系统消息
+            int messageRows = adminMapper.insertSystemMessage(user.getUserId(), "账号封禁通知", "您的账号已被管理员封禁，评论等功能暂时被禁用。解封时间为: " + userUpdateDto.getUnblockTime(),
+                    String.valueOf(MessageType.ACCOUNT_SUSPENSION), LocalDateTime.now());
+            if (messageRows == 0) {
+                log.error("发送解封通知失败，用户ID: {}", user.getUserId());
+            }
+            log.info("发送解封通知成功，用户ID: {}", user.getUserId());
         }
     }
 

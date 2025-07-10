@@ -1,6 +1,7 @@
 package com.kaotu.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.kaotu.base.constant.MessageType;
 import com.kaotu.base.context.UserContext;
 import com.kaotu.base.exception.BaseException;
 import com.kaotu.base.model.dto.PostCommentDto;
@@ -355,6 +356,9 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         }).collect(Collectors.toList());
     }
 
+    @Autowired
+    private SystemMessageMapper messageMapper;
+
     @Override
     @Transactional
     public void removePostById(Long postId) {
@@ -371,6 +375,11 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         }
         // 更新评论状态
         commentMapper.updateCommentStatus(postId, false);
+
+        messageMapper.insertSystemMessage(UserContext.getUserId(),
+                "您的帖子《" + post.getTitle() + "》已被删除",
+                "帖子删除通知", String.valueOf(MessageType.OPERATION_SUCCESS),false,
+                LocalDateTime.now());
     }
 
     @Override
@@ -394,6 +403,11 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
         // 更新子评论状态
         invalidateSubComments(commentId);
 
+
+        messageMapper.insertSystemMessage(UserContext.getUserId(),
+                "您的评论已被删除",
+                "评论删除通知", String.valueOf(MessageType.OPERATION_SUCCESS),false,
+                LocalDateTime.now());
     }
     /**
      * 递归禁用所有子评论
@@ -698,5 +712,11 @@ public class CommunityPostServiceImpl extends ServiceImpl<CommunityPostMapper, C
                 }
             });
         }
+
+        // 发送修改成功的系统消息
+        messageMapper.insertSystemMessage(UserContext.getUserId(),
+                "您的帖子《" + postUpdateDto.getTitle() + "》已被修改",
+                "帖子修改通知", String.valueOf(MessageType.OPERATION_SUCCESS),false,
+                LocalDateTime.now());
     }
 }

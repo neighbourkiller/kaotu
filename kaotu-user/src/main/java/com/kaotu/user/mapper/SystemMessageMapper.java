@@ -4,6 +4,7 @@ import com.kaotu.base.model.po.SystemMessage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 
@@ -25,4 +26,10 @@ public interface SystemMessageMapper extends BaseMapper<SystemMessage> {
                             @Param("type") String type,
                             @Param("isRead") Boolean isRead,
                             @Param("time") LocalDateTime time);
+
+    @Update("UPDATE system_message " +
+            "SET is_read = #{isRead} " +
+            "WHERE id = #{messageId} AND receiver_id = #{userId}")
+    int updateMessageAsRead(@Param("messageId") Long messageId, @Param("userId") String userId,
+                      @Param("isRead") Boolean isRead);
 }

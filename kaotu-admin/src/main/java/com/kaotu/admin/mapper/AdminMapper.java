@@ -12,6 +12,8 @@ import com.kaotu.base.model.vo.BookVO;
 import com.kaotu.base.model.vo.CommentVO;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
+
 @Mapper
 public interface AdminMapper extends BaseMapper<Admin> {
 
@@ -33,4 +35,12 @@ public interface AdminMapper extends BaseMapper<Admin> {
 
 
     int updateCommentStatusByBookId(LambdaUpdateWrapper<Comment> lambdaUpdateWrapper);
+
+    @Insert("INSERT INTO system_message (receiver_id, title, content, type, create_time) " +
+            "VALUES (#{userId}, #{title}, #{content}, #{type}, #{time})")
+    int insertSystemMessage(@Param("userId") String userId,
+                            @Param("title") String title,
+                            @Param("content") String content,
+                            @Param("type") String type,
+                            @Param("time") LocalDateTime time);
 }

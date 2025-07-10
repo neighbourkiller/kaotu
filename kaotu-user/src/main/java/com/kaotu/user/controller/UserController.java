@@ -219,6 +219,7 @@ public class UserController {
     }*/
 
     @GetMapping("/system")
+    @Operation(summary = "获取系统消息", description = "获取当前用户的系统消息列表")
     public Result<List<SystemMessage>> getSystemMessages() {
         log.info("Fetching system messages for userId: {}", UserContext.getUserId());
         try {
@@ -230,7 +231,17 @@ public class UserController {
         }
     }
 
-
+    @GetMapping("/read")
+    @Operation(summary = "标记消息为已读", description = "将指定的系统消息标记为已读")
+    public Result markMessageAsRead(@RequestParam("messageIds") List<Long> messageIds) {
+        try {
+            userService.markMessagesAsRead(messageIds);
+            return Result.success();
+        } catch (BaseException e) {
+            log.error("Error marking messages as read: {}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
+    }
 
 
 }
